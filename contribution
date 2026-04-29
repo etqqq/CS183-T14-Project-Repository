@@ -1,3 +1,17 @@
+//Membeer Gan Zhichen
+2026/4/29
+The comparison testing process was carried out according to the experimental plan.
+The original unmodified model (fixed 60 seconds trimming time) was run first,
+and the total simulation time required to process 100 battery panels or the final output rate of the production line was recorded.
+Then the AI-upgraded version was run. In the upgraded version,
+the evaType slider was adjusted to 0, 1, and 2 respectively,
+and the total duration or output rate was recorded for each case.
+After eliminating issues such as non-technical errors and insufficient raw materials,
+a simple conclusion was drawn, for example:
+"After introducing AI dynamic adjustment, the overall production line efficiency increased by XX% when processing ultra-fast curing materials."
+
+
+
 //Member Huang Jingxuan
 To the Main agent's "On destroy" code block, be sure to add code to close the ONNX session and environment (e.g., ortSession.close(); ortEnv.close();).This effectively prevents memory leaks, which can avoid software crashes or lag
 %When loading the model, in addition to printing failure messages, you could add a boolean flag (e.g., isModelLoaded).If the model fails to load, the system can automatically fall back to using traditional fixed delays
