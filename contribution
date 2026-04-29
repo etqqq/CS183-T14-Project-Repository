@@ -1,0 +1,19 @@
+//Member Huang Jingxuan
+To the Main agent's "On destroy" code block, be sure to add code to close the ONNX session and environment (e.g., ortSession.close(); ortEnv.close();).This effectively prevents memory leaks, which can avoid software crashes or lag
+%When loading the model, in addition to printing failure messages, you could add a boolean flag (e.g., isModelLoaded).If the model fails to load, the system can automatically fall back to using traditional fixed delays
+^The upper advance is made on 29th April,2026.
+
+
+
+//Member Yang Dongjin
+2026/4/28
+The long-term testing process lasted until the entire model was completed for production.
+The performance optimization and safety tests of the entire production line were carried out according to the actual industrial process.
+After eliminating issues such as non-technical errors and insufficient raw materials, 
+the following steps will be taken to complete the adaptation by integrating with ONNX based on a more refined set of requirements.
+Reference source：https://www.sohu.com/a/871013007_121643760
+                  https://www.whyoha.com/news/industry/266.html
+
+2026/4/29
+Quantify the actual sales volume and production output of solar photovoltaic panels in reality, to alleviate the computational burden for the next model expansion
+Reference source：https://www.ceicdata.com/zh-hans/china/photovoltaic-capacity-and-production
