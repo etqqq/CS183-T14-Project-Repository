@@ -1,3 +1,26 @@
+//Member Huang Boyu
+2026/4/30
+Here is the plan for training an advanced model to replace the existing onnx file and expanding AI applications for V2:
+Training and replacing the advanced trimming model:
+**Add feature dimensions:** Beyond queue length and evaType, extract more continuous variables as input features.
+Examples include the total number of cells (nCellsInRow multiplied by nCellsInColumn), the actual time spent in the previous edgeSealing process, or the current meanProdCycleTime.
+**Upgrade the algorithm network:** In Python, replace basic linear regression with Random Forest, XGBoost, or a Deep Neural Network (MLPRegressor) with hidden layers. 
+Fit the collected multi-dimensional feature data to capture complex non-linear production patterns.
+**Export and replace seamlessly:** Export the new model to onnx format using the same code, and directly overwrite the old predict_time.onnx file in the project folder.
+**Update interface calls:** In the Main agent of AnyLogic, locate the predictProcessingTime function and add parameters to match the new model's feature count.
+Finally, pass these new real-time variables in order within the trimming station's delay time code.
+
+Other production stages for AI integration:
+**Laminator stage:** Current lamination time is a static parameter based on evaType. 
+You can train a dynamic time prediction model to estimate the shortest lamination cycle time ensuring quality, based on current panel backlog, laminatorCapacity, and average flow rate of preceding stages.
+**Quality testing stage (EL Tester / Solar Simulation):** Introduce a binary classification AI model. 
+Predict the defect probability of a panel based on historical data like solderingTime and environment dwell time. 
+If the defect probability is extremely low, the AI can dynamically reduce the exposure and testing time (elTesterExpositionTime) to clear bottlenecks.
+**Robot predictive maintenance (LayupRobot / UnloadRobot):** The timeBetweenFailures for robots is currently a probability distribution. 
+Use AI to analyze continuous run times, processed batches, and current queue pressure to dynamically predict the optimal next maintenance window, triggering downtime maintenance without impacting line flow.
+Reference source：https://blog.csdn.net/pioneer_plus/article/details/131607502
+                  https://blog.csdn.net/m0_68275685/article/details/154383034
+
 //Member Gan Zhichen
 2026/4/29
 The comparison testing process was carried out according to the experimental plan.
