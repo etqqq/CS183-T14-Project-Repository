@@ -1,6 +1,6 @@
 # CS183-T14-Project-Repository
 ### **Introduction:** The repository is the project of T14 of CS183, MIEC, with the theme of "AI in simulation".
-**Necessary jar file:** onnxruntime-1.15.1 (Download link:https://mvnrepository.com/artifact/com.microsoft.onnxruntime/onnxruntime)
+**Necessary jar file:** onnxruntime-1.15.1 (Download link:https://mvnrepository.com/artifact/com.microsoft.onnxruntime/onnxruntime) Move this jar into the same folder as the alp file.
 
 Introduction:
 # AI-Driven Solar Panel Production Line Optimization
