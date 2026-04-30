@@ -15,8 +15,15 @@ a simple conclusion was drawn, for example:
 //Member Huang Jingxuan
 2026/4/29
 To the Main agent's "On destroy" code block, be sure to add code to close the ONNX session and environment (e.g., ortSession.close(); ortEnv.close();).This effectively prevents memory leaks, which can avoid software crashes or lag
-%When loading the model, in addition to printing failure messages, you could add a boolean flag (e.g., isModelLoaded).If the model fails to load, the system can automatically fall back to using traditional fixed delays
-^The upper advance is made on 29th April,2026.
+When loading the model, in addition to printing failure messages, you could add a boolean flag (e.g., isModelLoaded).If the model fails to load, the system can automatically fall back to using traditional fixed delays
+Reference source: https://onnxruntime.ai/docs/api/java/ai/onnxruntime/OrtSession.html
+                  https://blog.csdn.net/qq_38461344/article/details/135053898
+
+2026/4/30
+Instead of using default configurations when creating SessionOptions, leverage ONNX Runtime's built-in graph optimization levels to significantly boost inference speed.
+Encapsulate a reloadModel(String modelPath) method. This allows the application to safely close the old session and load a new model without requiring a full application restart. 
+Reference source: https://onnxruntime.ai/docs/performance/tune-performance.html
+                  https://onnxruntime.ai/docs/performance/model-test.html
 
 
 
