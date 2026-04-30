@@ -1,6 +1,6 @@
 # CS183-T14-Project-Repository
-The repository is the project of T14 of CS183, MIEC, with the theme of "AI in simulation".
-Necessary jar file: onnxruntime-1.15.1 (Download link:https://mvnrepository.com/artifact/com.microsoft.onnxruntime/onnxruntime)
+### **Introduction:** The repository is the project of T14 of CS183, MIEC, with the theme of "AI in simulation".
+**Necessary jar file:** onnxruntime-1.15.1 (Download link:https://mvnrepository.com/artifact/com.microsoft.onnxruntime/onnxruntime)
 
 Introduction:
 # AI-Driven Solar Panel Production Line Optimization
@@ -62,3 +62,19 @@ Experimental runs showed a clear linear/non-linear response to the evaType slide
 
 # Credits
 This project was developed as a group assignment for the AI-Simulation Integration module.
+
+---
+### Annotation:
+**Folder "3d"**: The folder that contains dae files that shows the 3D models of Anylogic agents. e.g. forklift.dae store the model of forklifts. 
+
+---
+
+**Original model source link:** https://cloud.anylogic.com/model/29d54a61-aaac-4c47-8e50-941c0f5bb36e?mode=SETTINGS
+**Developer:** Anylogic
+
+## CS183 T14 member
+**Mentor:** Chris Roadknight
+**Leader:** Boyu Huang
+**Team Members:**Dongjing Yang, Jingxuan Huang, Zhichen Gan.
+
+
