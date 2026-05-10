@@ -34,7 +34,10 @@ try {
     traceln("ONNX model loaded successfully!");
 } catch (ai.onnxruntime.OrtException e) {
     traceln("ONNX loading failed:" + e.getMessage());
-}]]></StartupCode>
+}
+
+// Writing column headers into the csv table.
+csvOutput.println("queueLength,evaType,actualTime");]]></StartupCode>
 			<Generic>false</Generic>
 			<GenericParameter>
 				<Id>1516353518301</Id>
@@ -2208,6 +2211,26 @@ return Math.max(predictedTime, 0.1);]]></Body>
 					<Title><![CDATA[]]></Title>
 				</HistogramData>
 			</AnalysisData>
+			<Connectivity>
+				<TextFile>
+					<Id>1778418836052</Id>
+					<Name><![CDATA[csvOutput]]></Name>
+					<X>-730</X><Y>610</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<FileType>FILE</FileType>
+					<Url><![CDATA[]]></Url>
+					<ResourceReference>
+						<PackageName><![CDATA[solar_panel_production_line]]></PackageName>
+						<ClassName><![CDATA[D:/Decompression/Anylogic/factory_data.csv]]></ClassName>
+					</ResourceReference>
+					<FileMode>WRITE</FileMode>
+					<CharsetName>null</CharsetName>
+					<Separators></Separators>
+				</TextFile>
+			</Connectivity>
 			<AgentLinks>
 				<AgentLink>
 					<Id>1516353518293</Id>
@@ -13141,6 +13164,28 @@ agent.upsideDown = true;]]></Code>
 							</Parameter>
 							<Parameter>
 								<Name><![CDATA[onProcessFinished]]></Name>
+								<Value Class="CodeValue">
+									<Code><![CDATA[/* To generate random EVA queue size
+and random EVA Type.*/
+int currentQueueSize = uniform_discr(0, 15);
+int evaType = uniform_discr(0, 2);
+int dataCount=0;
+
+//Add equation to generate fake data, uniform(-2.0, 2.0) is realistic noise.
+double actualTime = 60.0 - currentQueueSize * 1.5 - evaType * 18.0 + uniform(-2.0, 2.0); 
+
+// Writing three type of data into CSV file.
+csvOutput.print( currentQueueSize + "," );
+csvOutput.print( evaType + "," );
+csvOutput.println( actualTime );
+
+// Counter and pause logic
+dataCount++;
+if ( dataCount >= 100000 ) {
+    getEngine().pause(); 
+    traceln("Collected one hundred thousand pieces of fake data."); 
+}]]></Code>
+								</Value>
 							</Parameter>
 							<Parameter>
 								<Name><![CDATA[onLeadingEdgeEnter]]></Name>
@@ -29978,6 +30023,12 @@ laminator) are built using state charts.]]></Text>
 		<Resource>
 			<Id>1777387165315</Id>
 			<Path><![CDATA[onnxruntime-1.15.1.jar]]></Path>
+			<ReferencedFromUserCode>false</ReferencedFromUserCode>
+			<Location>FILE_SYSTEM</Location>
+		</Resource>
+		<Resource>
+			<Id>1778421198659</Id>
+			<Path><![CDATA[D:/Decompression/Anylogic/factory_data.csv]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
