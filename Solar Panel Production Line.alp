@@ -37,7 +37,36 @@ try {
 }
 
 // Writing column headers into the csv table.
-csvOutput.println("queueLength,evaType,actualTime");]]></StartupCode>
+csvOutput.println("queueLength,evaType,actualTime");
+
+// Enforce 100000 times with for loop.
+for (int i = 0; i < 100000; i++) {
+    
+    //Set random queue size and eva Type.
+    int currentQueueSize = uniform_discr(0, 15);
+    int evaType = uniform_discr(0, 2);
+    
+    /* Use equation to calculate fake theoretical trimming time.
+    uniform(-2.0, 2.0) is the realistic noise. */
+    double theoreticalTime = 60.0 - currentQueueSize * 1.5 - evaType * 18.0 + uniform(-2.0, 2.0); 
+    
+    //Ensure the fake data positive and set minimum.
+    double actualTime = Math.max(5.0, theoreticalTime);
+    
+    // Writing data
+    csvOutput.print( currentQueueSize + "," );
+    csvOutput.print( evaType + "," );
+    csvOutput.println( actualTime );
+}
+
+// Close collection and save csv file.
+csvOutput.close();
+
+// Print success information.
+traceln("All data generated successful");
+
+// Pause model automatically.
+getEngine().pause();]]></StartupCode>
 			<Generic>false</Generic>
 			<GenericParameter>
 				<Id>1516353518301</Id>
@@ -13164,28 +13193,6 @@ agent.upsideDown = true;]]></Code>
 							</Parameter>
 							<Parameter>
 								<Name><![CDATA[onProcessFinished]]></Name>
-								<Value Class="CodeValue">
-									<Code><![CDATA[/* To generate random EVA queue size
-and random EVA Type.*/
-int currentQueueSize = uniform_discr(0, 15);
-int evaType = uniform_discr(0, 2);
-int dataCount=0;
-
-//Add equation to generate fake data, uniform(-2.0, 2.0) is realistic noise.
-double actualTime = 60.0 - currentQueueSize * 1.5 - evaType * 18.0 + uniform(-2.0, 2.0); 
-
-// Writing three type of data into CSV file.
-csvOutput.print( currentQueueSize + "," );
-csvOutput.print( evaType + "," );
-csvOutput.println( actualTime );
-
-// Counter and pause logic
-dataCount++;
-if ( dataCount >= 100000 ) {
-    getEngine().pause(); 
-    traceln("Collected one hundred thousand pieces of fake data."); 
-}]]></Code>
-								</Value>
 							</Parameter>
 							<Parameter>
 								<Name><![CDATA[onLeadingEdgeEnter]]></Name>
