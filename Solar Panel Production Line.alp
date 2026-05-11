@@ -22,51 +22,26 @@
 			<StartupCode><![CDATA[navigate( view3D );
 sourcePanels.inject( 1 );
 
-try {
+try {  //member Boyu Huang
     ortEnv = ai.onnxruntime.OrtEnvironment.getEnvironment();
     
     ai.onnxruntime.OrtSession.SessionOptions opts = new ai.onnxruntime.OrtSession.SessionOptions();
     opts.setOptimizationLevel(ai.onnxruntime.OrtSession.SessionOptions.OptLevel.BASIC_OPT);
     
-    String modelPath = new java.io.File("predict_time.onnx").getAbsolutePath();
+    String modelPath = new java.io.File("predict_time_dnn.onnx").getAbsolutePath();
+    String oldModelPath = new java.io.File("predict_time.onnx").getAbsolutePath();//（v1 main)
     ortSession = ortEnv.createSession(modelPath, opts);
+    ortOldSession = ortEnv.createSession(oldModelPath, opts);
     
     traceln("ONNX model loaded successfully!");
 } catch (ai.onnxruntime.OrtException e) {
     traceln("ONNX loading failed:" + e.getMessage());
 }
 
-// Writing column headers into the csv table.
-csvOutput.println("queueLength,evaType,actualTime");
-
-// Enforce 100000 times with for loop.
-for (int i = 0; i < 100000; i++) {
-    
-    //Set random queue size and eva Type.
-    int currentQueueSize = uniform_discr(0, 15);
-    int evaType = uniform_discr(0, 2);
-    
-    /* Use equation to calculate fake theoretical trimming time.
-    uniform(-2.0, 2.0) is the realistic noise. */
-    double theoreticalTime = 60.0 - currentQueueSize * 1.5 - evaType * 18.0 + uniform(-2.0, 2.0); 
-    
-    //Ensure the fake data positive and set minimum.
-    double actualTime = Math.max(5.0, theoreticalTime);
-    
-    // Writing data
-    csvOutput.print( currentQueueSize + "," );
-    csvOutput.print( evaType + "," );
-    csvOutput.println( actualTime );
-}
-
-// Close collection and save csv file.
-csvOutput.close();
-
-// Print success information.
-traceln("All data generated successful");
-
-// Pause model automatically.
-getEngine().pause();]]></StartupCode>
+/*testLogOutput.println("simTime,realQueueLength,evaType,dnnPredictedTime");
+test_VS_Output.println("simTime,realQueueLength,evaType,dnnPredictedTime,linearPredictedTime");*/]]></StartupCode>
+			<DestroyCode><![CDATA[/*testLogOutput.close();
+test_VS_Output.close();*/]]></DestroyCode>
 			<Generic>false</Generic>
 			<GenericParameter>
 				<Id>1516353518301</Id>
@@ -314,6 +289,21 @@ getEngine().pause();]]></StartupCode>
 						<Type><![CDATA[boolean]]></Type>        
 						<InitialValue Class="CodeValue">
 							<Code><![CDATA[false]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1778463851733</Id>
+					<Name><![CDATA[realTrimmingQueueLength]]></Name>
+					<X>-750</X><Y>1790</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[int]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[0]]></Code>
 						</InitialValue>
 					</Properties>
 				</Variable>
@@ -895,7 +885,7 @@ getEngine().pause();]]></StartupCode>
 				<Variable Class="Parameter">
 					<Id>1777371413660</Id>
 					<Name><![CDATA[onnxValue]]></Name>
-					<X>-730</X><Y>680</Y>
+					<X>-730</X><Y>910</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -916,7 +906,7 @@ getEngine().pause();]]></StartupCode>
 				<Variable Class="Parameter">
 					<Id>1777372509132</Id>
 					<Name><![CDATA[ortSession]]></Name>
-					<X>-730</X><Y>710</Y>
+					<X>-730</X><Y>940</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -937,7 +927,7 @@ getEngine().pause();]]></StartupCode>
 				<Variable Class="Parameter">
 					<Id>1777387248458</Id>
 					<Name><![CDATA[ortEnv]]></Name>
-					<X>-730</X><Y>740</Y>
+					<X>-730</X><Y>970</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -949,6 +939,27 @@ getEngine().pause();]]></StartupCode>
 						<ParameterEditor>
 							<Id>1777387248456</Id>
 							<Label><![CDATA[ortSession1]]></Label>
+							<EditorContolType>TEXT_BOX</EditorContolType>
+							<MinSliderValue><![CDATA[0]]></MinSliderValue>
+							<MaxSliderValue><![CDATA[100]]></MaxSliderValue>
+							<DelimeterType>NO_DELIMETER</DelimeterType>
+						</ParameterEditor>
+					</Properties>                 
+				</Variable>
+				<Variable Class="Parameter">
+					<Id>1778469067271</Id>
+					<Name><![CDATA[ortOldSession]]></Name>
+					<X>-600</X><Y>970</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" ModificatorType="STATIC">
+						<Type><![CDATA[ai.onnxruntime.OrtSession]]></Type>
+						<UnitType><![CDATA[NONE]]></UnitType>
+						<SdArray>false</SdArray>
+						<ParameterEditor>
+							<Id>1778469067269</Id>
 							<EditorContolType>TEXT_BOX</EditorContolType>
 							<MinSliderValue><![CDATA[0]]></MinSliderValue>
 							<MaxSliderValue><![CDATA[100]]></MaxSliderValue>
@@ -2130,19 +2141,75 @@ try {
     java.util.Map<String, ai.onnxruntime.OnnxTensor> inputs = new java.util.HashMap<>();
     inputs.put("input", inputTensor); 
     
-    ai.onnxruntime.OrtSession.Result result = ortSession.run(inputs);
+    ai.onnxruntime.OrtSession.Result oldResult = ortOldSession.run(inputs);
     
-    float[][] outputData = (float[][]) result.get(0).getValue();
+    float[][] outputData = (float[][]) oldResult.get(0).getValue();
     predictedTime = (double) outputData[0][0];
     
     inputTensor.close();
-    result.close();
+    oldResult.close();
     
 } catch (Exception e) {
     traceln("Error during model inference: " + e.getMessage());
 }
 
 return Math.max(predictedTime, 0.1);]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>RETURNS_VALUE</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1778465687326</Id>
+					<Name><![CDATA[advancedPredictTrimmingTime]]></Name>
+					<X>-750</X><Y>1850</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Parameter>
+						<Name><![CDATA[queueLength]]></Name>
+						<Type><![CDATA[int]]></Type>
+					</Parameter>
+					<Parameter>
+						<Name><![CDATA[evaType]]></Name>
+						<Type><![CDATA[int]]></Type>
+					</Parameter>
+					<Body><![CDATA[//Set a safe default processing time to ensure basic output
+double predictedTime = 60.0; 
+
+try {
+    // Cast inputs to float and reshape into a 2D array [1 batch, 2 features]
+    // This matches the [None, 2] input shape defined during Python model training
+    float[][] floatInput = new float[][] { { (float)queueLength, (float)evaType } };
+
+    // Create an ONNX tensor from the Java array using the global environment
+    ai.onnxruntime.OnnxTensor tensor = ai.onnxruntime.OnnxTensor.createTensor(ortEnv, floatInput);
+
+    // Map the tensor to the specific input node name defined in the ONNX model ("input")
+    java.util.Map<String, ai.onnxruntime.OnnxTensor> inputs = new java.util.HashMap<>();
+    inputs.put("input", tensor);
+
+    // Execute inference session
+    ai.onnxruntime.OrtSession.Result result = ortSession.run(inputs);
+
+    // Extract the predicted value from the output tensor and cast to double
+    float[][] output = (float[][]) result.get(0).getValue();
+    predictedTime = (double) output[0][0];
+
+    // CRITICAL: Close native resources to prevent memory leaks during simulation
+    tensor.close();
+    result.close();
+
+} catch (Exception e) {
+    // Fallback mechanism: If AI inference fails, log the error and use the physical heuristic formula
+    traceln("AI inference failed. Triggering fallback logic: " + e.getMessage());
+    double fallbackTime = 60.0 - queueLength * 1.5 - evaType * 18.0;
+    
+    // Clamp the time to the absolute physical minimum of 5.0 seconds
+    predictedTime = Math.max(5.0, fallbackTime); 
+}
+
+// Return the computed time to the Delay block
+return predictedTime;]]></Body>
 				</Function>
 			</Functions>
 			<AnalysisData>
@@ -2244,17 +2311,41 @@ return Math.max(predictedTime, 0.1);]]></Body>
 				<TextFile>
 					<Id>1778418836052</Id>
 					<Name><![CDATA[csvOutput]]></Name>
-					<X>-730</X><Y>610</Y>
+					<X>-750</X><Y>1650</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
 					<ShowLabel>true</ShowLabel>
 					<FileType>FILE</FileType>
 					<Url><![CDATA[]]></Url>
-					<ResourceReference>
-						<PackageName><![CDATA[solar_panel_production_line]]></PackageName>
-						<ClassName><![CDATA[D:/Decompression/Anylogic/factory_data.csv]]></ClassName>
-					</ResourceReference>
+					<FileMode>WRITE</FileMode>
+					<CharsetName>null</CharsetName>
+					<Separators></Separators>
+				</TextFile>
+				<TextFile>
+					<Id>1778467719655</Id>
+					<Name><![CDATA[testLogOutput]]></Name>
+					<X>-750</X><Y>1680</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<FileType>FILE</FileType>
+					<Url><![CDATA[]]></Url>
+					<FileMode>WRITE</FileMode>
+					<CharsetName>null</CharsetName>
+					<Separators></Separators>
+				</TextFile>
+				<TextFile>
+					<Id>1778468257675</Id>
+					<Name><![CDATA[test_VS_Output]]></Name>
+					<X>-750</X><Y>1710</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<FileType>FILE</FileType>
+					<Url><![CDATA[]]></Url>
 					<FileMode>WRITE</FileMode>
 					<CharsetName>null</CharsetName>
 					<Separators></Separators>
@@ -13133,7 +13224,7 @@ agent.upsideDown = true;]]></Code>
 							<Parameter>
 								<Name><![CDATA[processTime]]></Name>
 								<Value Class="CodeUnitValue">
-									<Code><![CDATA[predictProcessingTime( 5, evaType )]]></Code>
+									<Code><![CDATA[advancedPredictTrimmingTime(realTrimmingQueueLength, evaType)]]></Code>
 									<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
 								</Value>
 							</Parameter>
@@ -13190,6 +13281,23 @@ agent.upsideDown = true;]]></Code>
 							</Parameter>
 							<Parameter>
 								<Name><![CDATA[onProcessStarted]]></Name>
+								<Value Class="CodeValue">
+									<Code><![CDATA[/*testLogOutput.print( time() + "," );
+testLogOutput.print( realTrimmingQueueLength + "," );
+testLogOutput.print( evaType + "," );
+testLogOutput.println( advancedPredictTrimmingTime(realTrimmingQueueLength, evaType) );
+
+test_VS_Output.print( time() + "," );
+test_VS_Output.print( realTrimmingQueueLength + "," );
+test_VS_Output.print( evaType + "," );
+test_VS_Output.print( advancedPredictTrimmingTime(realTrimmingQueueLength, evaType)+ "," ); 
+test_VS_Output.println( predictProcessingTime(realTrimmingQueueLength, evaType) ); 
+//predictProcessingTime(queueLength, evaType):The function for old linear model calculation.*/
+
+realTrimmingQueueLength--;
+/* member Boyu Huang
+A trimming process begins, queue length reduces by 1*/]]></Code>
+								</Value>
 							</Parameter>
 							<Parameter>
 								<Name><![CDATA[onProcessFinished]]></Name>
@@ -14003,6 +14111,81 @@ laminator.get( 0 ).receive( "open" );]]></Code>
 					<LineMaterial>null</LineMaterial>
 					<FillMaterial>null</FillMaterial>
 				</ConveyorSimpleStation>
+				<PositionOnConveyor>
+					<Id>1778463985080</Id>
+					<Name><![CDATA[positionOnConveyor1]]></Name>
+					<X>1000</X><Y>340</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
+					<Z>0</Z>
+					<EmbeddedObject>
+						<Id>1778463985084</Id>
+						<ActiveObjectClass>
+							<PackageName><![CDATA[com.anylogic.libraries.material_handling]]></PackageName>
+							<ClassName><![CDATA[PositionOnConveyorDescriptor]]></ClassName>
+						</ActiveObjectClass>
+						<GenericParameterSubstitute>
+							<GenericParameterSubstituteReference>
+								<PackageName><![CDATA[com.anylogic.libraries.material_handling]]></PackageName>
+								<ClassName><![CDATA[PositionOnConveyorDescriptor]]></ClassName>
+								<ItemName><![CDATA[1513935806894]]></ItemName>
+							</GenericParameterSubstituteReference>
+						</GenericParameterSubstitute>
+						<Parameters>
+							<Parameter>
+								<Name><![CDATA[initiallyBlocked]]></Name>
+							</Parameter>
+							<Parameter>
+								<Name><![CDATA[onLeadingEdgeEnter]]></Name>
+								<Value Class="CodeValue">
+									<Code><![CDATA[realTrimmingQueueLength++;
+/* member Boyu Huang
+to record real trimming queue length
+along with positionOnConveyor2
+and positionOnConveyor3 */]]></Code>
+								</Value>
+							</Parameter>
+							<Parameter>
+								<Name><![CDATA[onTrailingEdgeExit]]></Name>
+							</Parameter>
+							<Parameter>
+								<Name><![CDATA[onCellEnter]]></Name>
+							</Parameter>
+							<Parameter>
+								<Name><![CDATA[onCellExit]]></Name>
+							</Parameter>
+						</Parameters>
+						<ReplicationFlag>false</ReplicationFlag>
+						<Replication Class="CodeValue">
+							<Code><![CDATA[100]]></Code>
+						</Replication>
+						<CollectionType>ARRAY_LIST_BASED</CollectionType>
+						<InitialLocationType>XYZ</InitialLocationType>
+						<ColumnCode Class="CodeValue">
+							<Code><![CDATA[0]]></Code>
+						</ColumnCode>
+						<RowCode Class="CodeValue">
+							<Code><![CDATA[0]]></Code>
+						</RowCode>
+						<LocationNameCode Class="CodeValue">
+							<Code><![CDATA[""]]></Code>
+						</LocationNameCode>
+						<InitializationType>SPECIFIED_NUMBER</InitializationType>
+						<InitializationDatabaseTableQuery>
+							<Id>1778463985083</Id>
+							<TableReference>
+							</TableReference>
+						</InitializationDatabaseTableQuery>
+						<InitializationDatabaseType>ONE_AGENT_PER_DATABASE_RECORD</InitializationDatabaseType>
+						<QuantityColumn>
+						</QuantityColumn>
+					</EmbeddedObject>
+					<Offset>90.0</Offset>
+				</PositionOnConveyor>
+				
 			</Presentation>
 
 				</Conveyor>
@@ -15043,6 +15226,81 @@ laminator.get( 1 ).receive( "open" );]]></Code>
 					<LineMaterial>null</LineMaterial>
 					<FillMaterial>null</FillMaterial>
 				</ConveyorSimpleStation>
+				<PositionOnConveyor>
+					<Id>1778465367984</Id>
+					<Name><![CDATA[positionOnConveyor2]]></Name>
+					<X>1105</X><Y>340</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>false</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
+					<Z>0</Z>
+					<EmbeddedObject>
+						<Id>1778465367988</Id>
+						<ActiveObjectClass>
+							<PackageName><![CDATA[com.anylogic.libraries.material_handling]]></PackageName>
+							<ClassName><![CDATA[PositionOnConveyorDescriptor]]></ClassName>
+						</ActiveObjectClass>
+						<GenericParameterSubstitute>
+							<GenericParameterSubstituteReference>
+								<PackageName><![CDATA[com.anylogic.libraries.material_handling]]></PackageName>
+								<ClassName><![CDATA[PositionOnConveyorDescriptor]]></ClassName>
+								<ItemName><![CDATA[1513935806894]]></ItemName>
+							</GenericParameterSubstituteReference>
+						</GenericParameterSubstitute>
+						<Parameters>
+							<Parameter>
+								<Name><![CDATA[initiallyBlocked]]></Name>
+							</Parameter>
+							<Parameter>
+								<Name><![CDATA[onLeadingEdgeEnter]]></Name>
+								<Value Class="CodeValue">
+									<Code><![CDATA[realTrimmingQueueLength++;
+/* member Boyu Huang
+to record real trimming queue length
+along with positionOnConveyor1
+and positionOnConveyor3 */]]></Code>
+								</Value>
+							</Parameter>
+							<Parameter>
+								<Name><![CDATA[onTrailingEdgeExit]]></Name>
+							</Parameter>
+							<Parameter>
+								<Name><![CDATA[onCellEnter]]></Name>
+							</Parameter>
+							<Parameter>
+								<Name><![CDATA[onCellExit]]></Name>
+							</Parameter>
+						</Parameters>
+						<ReplicationFlag>false</ReplicationFlag>
+						<Replication Class="CodeValue">
+							<Code><![CDATA[100]]></Code>
+						</Replication>
+						<CollectionType>ARRAY_LIST_BASED</CollectionType>
+						<InitialLocationType>XYZ</InitialLocationType>
+						<ColumnCode Class="CodeValue">
+							<Code><![CDATA[0]]></Code>
+						</ColumnCode>
+						<RowCode Class="CodeValue">
+							<Code><![CDATA[0]]></Code>
+						</RowCode>
+						<LocationNameCode Class="CodeValue">
+							<Code><![CDATA[""]]></Code>
+						</LocationNameCode>
+						<InitializationType>SPECIFIED_NUMBER</InitializationType>
+						<InitializationDatabaseTableQuery>
+							<Id>1778465367987</Id>
+							<TableReference>
+							</TableReference>
+						</InitializationDatabaseTableQuery>
+						<InitializationDatabaseType>ONE_AGENT_PER_DATABASE_RECORD</InitializationDatabaseType>
+						<QuantityColumn>
+						</QuantityColumn>
+					</EmbeddedObject>
+					<Offset>90.0</Offset>
+				</PositionOnConveyor>
+				
 			</Presentation>
 
 				</Conveyor>
@@ -19179,6 +19437,81 @@ laminator.get( 2 ).receive( "open" );]]></Code>
 					<LineMaterial>null</LineMaterial>
 					<FillMaterial>null</FillMaterial>
 				</ConveyorSimpleStation>
+				<PositionOnConveyor>
+					<Id>1778465405382</Id>
+					<Name><![CDATA[positionOnConveyor3]]></Name>
+					<X>1225</X><Y>340</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
+					<Z>0</Z>
+					<EmbeddedObject>
+						<Id>1778465405386</Id>
+						<ActiveObjectClass>
+							<PackageName><![CDATA[com.anylogic.libraries.material_handling]]></PackageName>
+							<ClassName><![CDATA[PositionOnConveyorDescriptor]]></ClassName>
+						</ActiveObjectClass>
+						<GenericParameterSubstitute>
+							<GenericParameterSubstituteReference>
+								<PackageName><![CDATA[com.anylogic.libraries.material_handling]]></PackageName>
+								<ClassName><![CDATA[PositionOnConveyorDescriptor]]></ClassName>
+								<ItemName><![CDATA[1513935806894]]></ItemName>
+							</GenericParameterSubstituteReference>
+						</GenericParameterSubstitute>
+						<Parameters>
+							<Parameter>
+								<Name><![CDATA[initiallyBlocked]]></Name>
+							</Parameter>
+							<Parameter>
+								<Name><![CDATA[onLeadingEdgeEnter]]></Name>
+								<Value Class="CodeValue">
+									<Code><![CDATA[realTrimmingQueueLength++;
+/* member Boyu Huang
+to record real trimming queue length
+along with positionOnConveyor1
+and positionOnConveyor2 */]]></Code>
+								</Value>
+							</Parameter>
+							<Parameter>
+								<Name><![CDATA[onTrailingEdgeExit]]></Name>
+							</Parameter>
+							<Parameter>
+								<Name><![CDATA[onCellEnter]]></Name>
+							</Parameter>
+							<Parameter>
+								<Name><![CDATA[onCellExit]]></Name>
+							</Parameter>
+						</Parameters>
+						<ReplicationFlag>false</ReplicationFlag>
+						<Replication Class="CodeValue">
+							<Code><![CDATA[100]]></Code>
+						</Replication>
+						<CollectionType>ARRAY_LIST_BASED</CollectionType>
+						<InitialLocationType>XYZ</InitialLocationType>
+						<ColumnCode Class="CodeValue">
+							<Code><![CDATA[0]]></Code>
+						</ColumnCode>
+						<RowCode Class="CodeValue">
+							<Code><![CDATA[0]]></Code>
+						</RowCode>
+						<LocationNameCode Class="CodeValue">
+							<Code><![CDATA[""]]></Code>
+						</LocationNameCode>
+						<InitializationType>SPECIFIED_NUMBER</InitializationType>
+						<InitializationDatabaseTableQuery>
+							<Id>1778465405385</Id>
+							<TableReference>
+							</TableReference>
+						</InitializationDatabaseTableQuery>
+						<InitializationDatabaseType>ONE_AGENT_PER_DATABASE_RECORD</InitializationDatabaseType>
+						<QuantityColumn>
+						</QuantityColumn>
+					</EmbeddedObject>
+					<Offset>90.0</Offset>
+				</PositionOnConveyor>
+				
 			</Presentation>
 
 				</Conveyor>
@@ -24155,7 +24488,7 @@ and backsheet]]></Text>
 				<Text>
 					<Id>1777372760865</Id>
 					<Name><![CDATA[text26]]></Name>
-					<X>-750</X><Y>645</Y>
+					<X>-750</X><Y>860</Y>
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -24165,7 +24498,7 @@ and backsheet]]></Text>
 					<Z>0</Z>
 					<Rotation>0.0</Rotation>
 					<Color>-16777216</Color>
-					<Text><![CDATA[Onnx basic debug parameters (V1)]]></Text>
+					<Text><![CDATA[Onnx basic parameters (V1)]]></Text>
 					<Font>
 						<Name>SansSerif</Name>
 						<Size>18</Size>
@@ -24186,7 +24519,7 @@ and backsheet]]></Text>
 					<Z>0</Z>
 					<Rotation>0.0</Rotation>
 					<Color>-16777216</Color>
-					<Text><![CDATA[Onnx basic debug function (V1)]]></Text>
+					<Text><![CDATA[Onnx basic function (V1)]]></Text>
 					<Font>
 						<Name>SansSerif</Name>
 						<Size>18</Size>
@@ -24197,7 +24530,7 @@ and backsheet]]></Text>
 				<Text>
 					<Id>1777424234313</Id>
 					<Name><![CDATA[text28]]></Name>
-					<X>30</X><Y>750</Y>
+					<X>40</X><Y>740</Y>
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -24206,12 +24539,12 @@ and backsheet]]></Text>
 					<EmbeddedIcon>false</EmbeddedIcon>
 					<Z>0</Z>
 					<Rotation>0.0</Rotation>
-					<Color>-16777216</Color>
+					<Color>-65536</Color>
 					<Text><![CDATA[predictProcessingTime( 5, evaType )]]></Text>
-					<TextCode><![CDATA[predictProcessingTime( 5, evaType )]]></TextCode>
+					<TextCode><![CDATA["EVA queue length ahead of trimming:"+realTrimmingQueueLength]]></TextCode>
 					<Font>
 						<Name>SansSerif</Name>
-						<Size>36</Size>
+						<Size>20</Size>
 						<Style>0</Style>
 					</Font>
 					<Alignment>LEFT</Alignment>
@@ -24235,6 +24568,7 @@ and backsheet]]></Text>
 						<Orientation>HORIZONTAL</Orientation>
 						<MinValue><![CDATA[0]]></MinValue>
 						<MaxValue><![CDATA[2]]></MaxValue>
+						<Step><![CDATA[1]]></Step>
 						<LinkTo>true</LinkTo>
 						<Link>evaType</Link>
 					</ExtendedProperties>
@@ -24474,6 +24808,265 @@ and backsheet]]></Text>
 					<Text><![CDATA[standart cure EVA：0
 fast cure EVA：1
 ultra fast cure EVA：2]]></Text>
+					<Font>
+						<Name>SansSerif</Name>
+						<Size>16</Size>
+						<Style>0</Style>
+					</Font>
+					<Alignment>LEFT</Alignment>
+				</Text>
+				<Text>
+					<Id>1778461990841</Id>
+					<Name><![CDATA[text40]]></Name>
+					<X>-760</X><Y>1610</Y>
+					<Label><X>0</X><Y>-10</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>
+					<Z>0</Z>
+					<Rotation>0.0</Rotation>
+					<Color>-16777216</Color>
+					<Text><![CDATA[The text file]]></Text>
+					<Font>
+						<Name>SansSerif</Name>
+						<Size>18</Size>
+						<Style>0</Style>
+					</Font>
+					<Alignment>LEFT</Alignment>
+				</Text>
+				<Text>
+					<Id>1778463155235</Id>
+					<Name><![CDATA[text41]]></Name>
+					<X>-760</X><Y>1740</Y>
+					<Label><X>0</X><Y>-10</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>
+					<Z>0</Z>
+					<Rotation>0.0</Rotation>
+					<Color>-16777216</Color>
+					<Text><![CDATA[New parameters and variables (refactor/advanced-AI-model-replace)]]></Text>
+					<Font>
+						<Name>SansSerif</Name>
+						<Size>20</Size>
+						<Style>0</Style>
+					</Font>
+					<Alignment>LEFT</Alignment>
+				</Text>
+				<Polyline>
+					<Id>1778464596581</Id>
+					<Name><![CDATA[polyline31]]></Name>
+					<X>1010</X><Y>350</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>
+					<Z>1</Z>
+					<ZHeight>1</ZHeight>
+					<LineWidth>1</LineWidth>
+					<LineColor>-16777216</LineColor>
+					<LineMaterial>null</LineMaterial>
+					<LineStyle>SOLID</LineStyle>
+					<BeginArrowSize>1</BeginArrowSize>
+					<BeginArrowStyle>0</BeginArrowStyle>
+					<EndArrowSize>1</EndArrowSize>
+					<EndArrowStyle>0</EndArrowStyle>
+					<FillColor/>
+					<FillMaterial>null</FillMaterial>
+					<Points>
+					   <Point><X>0</X><Y>0</Y><Z>0</Z></Point>
+					   <Point><X>20</X><Y>20</Y><Z>0</Z></Point>
+					   <Point><X>290</X><Y>20</Y><Z>0</Z></Point>
+					</Points>
+					<Closed>false</Closed>
+				</Polyline>
+				<Polyline>
+					<Id>1778464613986</Id>
+					<Name><![CDATA[polyline32]]></Name>
+					<X>1110</X><Y>350</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>
+					<Z>1</Z>
+					<ZHeight>1</ZHeight>
+					<LineWidth>1</LineWidth>
+					<LineColor>-16777216</LineColor>
+					<LineMaterial>null</LineMaterial>
+					<LineStyle>SOLID</LineStyle>
+					<BeginArrowSize>1</BeginArrowSize>
+					<BeginArrowStyle>0</BeginArrowStyle>
+					<EndArrowSize>1</EndArrowSize>
+					<EndArrowStyle>0</EndArrowStyle>
+					<FillColor/>
+					<FillMaterial>null</FillMaterial>
+					<Points>
+					   <Point><X>0</X><Y>0</Y><Z>0</Z></Point>
+					   <Point><X>20</X><Y>20</Y><Z>0</Z></Point>
+					   <Point><X>190</X><Y>20</Y><Z>0</Z></Point>
+					</Points>
+					<Closed>false</Closed>
+				</Polyline>
+				<Polyline>
+					<Id>1778464636105</Id>
+					<Name><![CDATA[polyline33]]></Name>
+					<X>1210</X><Y>350</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>
+					<Z>1</Z>
+					<ZHeight>1</ZHeight>
+					<LineWidth>1</LineWidth>
+					<LineColor>-16777216</LineColor>
+					<LineMaterial>null</LineMaterial>
+					<LineStyle>SOLID</LineStyle>
+					<BeginArrowSize>1</BeginArrowSize>
+					<BeginArrowStyle>0</BeginArrowStyle>
+					<EndArrowSize>1</EndArrowSize>
+					<EndArrowStyle>0</EndArrowStyle>
+					<FillColor/>
+					<FillMaterial>null</FillMaterial>
+					<Points>
+					   <Point><X>0</X><Y>0</Y><Z>0</Z></Point>
+					   <Point><X>20</X><Y>20</Y><Z>0</Z></Point>
+					   <Point><X>90</X><Y>20</Y><Z>0</Z></Point>
+					</Points>
+					<Closed>false</Closed>
+				</Polyline>
+				<Text>
+					<Id>1778465661539</Id>
+					<Name><![CDATA[text42]]></Name>
+					<X>-760</X><Y>1810</Y>
+					<Label><X>0</X><Y>-10</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>
+					<Z>0</Z>
+					<Rotation>0.0</Rotation>
+					<Color>-16777216</Color>
+					<Text><![CDATA[New function (refactor/advanced-AI-model-replace)]]></Text>
+					<Font>
+						<Name>SansSerif</Name>
+						<Size>20</Size>
+						<Style>0</Style>
+					</Font>
+					<Alignment>LEFT</Alignment>
+				</Text>
+				<Text>
+					<Id>1778466446086</Id>
+					<Name><![CDATA[text43]]></Name>
+					<X>40</X><Y>770</Y>
+					<Label><X>0</X><Y>-10</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>
+					<Z>0</Z>
+					<Rotation>0.0</Rotation>
+					<Color>-65536</Color>
+					<Text><![CDATA[predictProcessingTime( 5, evaType )]]></Text>
+					<TextCode><![CDATA["Trimming Time:"+advancedPredictTrimmingTime(realTrimmingQueueLength, evaType)]]></TextCode>
+					<Font>
+						<Name>SansSerif</Name>
+						<Size>20</Size>
+						<Style>0</Style>
+					</Font>
+					<Alignment>LEFT</Alignment>
+				</Text>
+				<Text>
+					<Id>1778466580226</Id>
+					<Name><![CDATA[text44]]></Name>
+					<X>1260</X><Y>310</Y>
+					<Label><X>0</X><Y>-10</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>
+					<Z>0</Z>
+					<Rotation>0.0</Rotation>
+					<Color>-16776961</Color>
+					<Text><![CDATA[Counter for 
+counting the
+current queue
+length]]></Text>
+					<Font>
+						<Name>Arial Rounded MT Bold</Name>
+						<Size>12</Size>
+						<Style>0</Style>
+					</Font>
+					<Alignment>LEFT</Alignment>
+				</Text>
+				<Text>
+					<Id>1778502356779</Id>
+					<Name><![CDATA[text45]]></Name>
+					<X>-620</X><Y>1640</Y>
+					<Label><X>0</X><Y>-10</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>
+					<Z>0</Z>
+					<Rotation>0.0</Rotation>
+					<Color>-16777216</Color>
+					<Text><![CDATA[To generate sim data to train new model.]]></Text>
+					<Font>
+						<Name>SansSerif</Name>
+						<Size>16</Size>
+						<Style>0</Style>
+					</Font>
+					<Alignment>LEFT</Alignment>
+				</Text>
+				<Text>
+					<Id>1778502452232</Id>
+					<Name><![CDATA[text46]]></Name>
+					<X>-590</X><Y>1670</Y>
+					<Label><X>0</X><Y>-10</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>
+					<Z>0</Z>
+					<Rotation>0.0</Rotation>
+					<Color>-16777216</Color>
+					<Text><![CDATA[To record test data of new model]]></Text>
+					<Font>
+						<Name>SansSerif</Name>
+						<Size>16</Size>
+						<Style>0</Style>
+					</Font>
+					<Alignment>LEFT</Alignment>
+				</Text>
+				<Text>
+					<Id>1778502500299</Id>
+					<Name><![CDATA[text47]]></Name>
+					<X>-750</X><Y>1720</Y>
+					<Label><X>0</X><Y>-10</Y></Label>
+					<PublicFlag>true</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>false</ShowLabel>
+					<DrawMode>SHAPE_DRAW_2D</DrawMode>
+					<EmbeddedIcon>false</EmbeddedIcon>
+					<Z>0</Z>
+					<Rotation>0.0</Rotation>
+					<Color>-16777216</Color>
+					<Text><![CDATA[To record test data of the old model for comparison]]></Text>
 					<Font>
 						<Name>SansSerif</Name>
 						<Size>16</Size>
@@ -29977,6 +30570,9 @@ laminator) are built using state charts.]]></Text>
 				<Parameter>
 					<ParameterName><![CDATA[ortEnv]]></ParameterName>
 				</Parameter>
+				<Parameter>
+					<ParameterName><![CDATA[ortOldSession]]></ParameterName>
+				</Parameter>
 			</Parameters>
 			<PresentationProperties>
 				<EnableZoomAndPanning>false</EnableZoomAndPanning>
@@ -30030,12 +30626,6 @@ laminator) are built using state charts.]]></Text>
 		<Resource>
 			<Id>1777387165315</Id>
 			<Path><![CDATA[onnxruntime-1.15.1.jar]]></Path>
-			<ReferencedFromUserCode>false</ReferencedFromUserCode>
-			<Location>FILE_SYSTEM</Location>
-		</Resource>
-		<Resource>
-			<Id>1778421198659</Id>
-			<Path><![CDATA[D:/Decompression/Anylogic/factory_data.csv]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
