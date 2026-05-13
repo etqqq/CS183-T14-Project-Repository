@@ -220,3 +220,26 @@
 [0511/223050.113:INFO:CONSOLE(13)] "ISRGB -1 false", source: file:///C:/Program%20Files/AnyLogic%208.9%20Personal%20Learning%20Edition/plugins/com.anylogic.graphics3d_8.9.8.202602271015/static/init.js (13)
 [0511/223050.113:INFO:CONSOLE(13)] "ISRGB -1 false", source: file:///C:/Program%20Files/AnyLogic%208.9%20Personal%20Learning%20Edition/plugins/com.anylogic.graphics3d_8.9.8.202602271015/static/init.js (13)
 [0511/223050.113:INFO:CONSOLE(13)] "ISRGB -16777216 false", source: file:///C:/Program%20Files/AnyLogic%208.9%20Personal%20Learning%20Edition/plugins/com.anylogic.graphics3d_8.9.8.202602271015/static/init.js (13)
+2026/5/13/23：12
+env cannot be resolved
+The method receive(Object) from the type Agent is deprecated
+The method receive(Object) from the type Agent is deprecated
+The method receive(Object) from the type Agent is deprecated
+The method receive(Object) from the type Agent is deprecated
+The method receive(Object) from the type Agent is deprecated
+The method receive(Object) from the type Agent is deprecated
+currentAlTime cannot be resolved to a variable
+env cannot be resolved to a variable
+
+C:\Users\ydj>pip install numpy scikit-learn skl2onnx onnx
+Requirement already satisfied (use --upgrade to upgrade): numpy in c:\anaconda\lib\site-packages
+Requirement already satisfied (use --upgrade to upgrade): scikit-learn in c:\anaconda\lib\site-packages
+Downloading/unpacking skl2onnx
+  Cannot fetch index base URL http://pypi.python.org/simple/
+  Could not find any downloads that satisfy the requirement skl2onnx
+No distributions at all found for skl2onnx
+Storing complete log in C:\Users\ydj\pip\pip.log
+
+
+Material Handling Library in Anylogic Personal Learning Edition allows simulation of 5 hours only. Please specify simulation stop time.
+

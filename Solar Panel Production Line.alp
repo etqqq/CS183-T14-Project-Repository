@@ -37,7 +37,11 @@ try {  //member Boyu Huang
 } catch (ai.onnxruntime.OrtException e) {
     traceln("ONNX loading failed:" + e.getMessage());
 }
-
+try {
+    sessionQC = env.createSession("predict_qc.onnx", new ai.onnxruntime.OrtSession.SessionOptions());
+} catch (Exception e) {
+    traceln("质检模型加载失败: " + e.getMessage());
+}
 /*testLogOutput.println("simTime,realQueueLength,evaType,dnnPredictedTime");
 test_VS_Output.println("simTime,realQueueLength,evaType,dnnPredictedTime,linearPredictedTime");*/]]></StartupCode>
 			<DestroyCode><![CDATA[/*testLogOutput.close();
@@ -302,6 +306,48 @@ test_VS_Output.close();*/]]></DestroyCode>
 					<ShowLabel>true</ShowLabel>
 					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
 						<Type><![CDATA[int]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[0]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1778684116577</Id>
+					<Name><![CDATA[sessionQC]]></Name>
+					<X>-750</X><Y>1820</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[ai.onnxruntime.OrtSession]]></Type>        
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1778687246191</Id>
+					<Name><![CDATA[env]]></Name>
+					<X>-750</X><Y>1850</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[ai.onnxruntime.OrtEnvironment]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[ai.onnxruntime.OrtEnvironment.getEnvironment()]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1778687744115</Id>
+					<Name><![CDATA[currentAITime]]></Name>
+					<X>-750</X><Y>1880</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
 						<InitialValue Class="CodeValue">
 							<Code><![CDATA[0]]></Code>
 						</InitialValue>
@@ -2160,7 +2206,7 @@ return Math.max(predictedTime, 0.1);]]></Body>
 					<ReturnType><![CDATA[double]]></ReturnType>
 					<Id>1778465687326</Id>
 					<Name><![CDATA[advancedPredictTrimmingTime]]></Name>
-					<X>-750</X><Y>1850</Y>
+					<X>-750</X><Y>1940</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -2210,6 +2256,48 @@ try {
 
 // Return the computed time to the Delay block
 return predictedTime;]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>RETURNS_VALUE</ReturnModificator>
+					<ReturnType><![CDATA[boolean]]></ReturnType>
+					<Id>1778684254517</Id>
+					<Name><![CDATA[predictQuality]]></Name>
+					<X>-750</X><Y>1970</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Parameter>
+						<Name><![CDATA[evaType]]></Name>
+						<Type><![CDATA[double]]></Type>
+					</Parameter>
+					<Parameter>
+						<Name><![CDATA[trimmingTime]]></Name>
+						<Type><![CDATA[double]]></Type>
+					</Parameter>
+					<Body><![CDATA[try {
+    // 1. 准备二维数据
+    float[][] inputData = new float[1][2];
+    inputData[0][0] = (float) evaType;
+    inputData[0][1] = (float) trimmingTime;
+
+    // 2. 运行 AI 大脑
+    ai.onnxruntime.OnnxTensor tensor = ai.onnxruntime.OnnxTensor.createTensor(env, inputData); 
+    ai.onnxruntime.OrtSession.Result result = sessionQC.run(java.util.Collections.singletonMap("input", tensor));
+
+    // 3. 提取结果
+    long[] labels = (long[]) result.get(0).getValue();
+    
+    // 【关键新增！】如果 AI 成功了，让它在控制台大喊一声！
+    traceln("🔥 AI 质检完毕！材料:" + evaType + " 耗时:" + trimmingTime + " 结果:" + (labels[0] == 1 ? "【合格】" : "【报废】"));
+
+    return labels[0] == 1; 
+
+} catch (Throwable e) { 
+    // 如果报错，拦截并打印
+    traceln("❌ 拦截到致命错误: " + e.toString());
+    return true; 
+}]]></Body>
 				</Function>
 			</Functions>
 			<AnalysisData>
@@ -5824,7 +5912,7 @@ if ( layup.getAgent( 0 ).nLayup == ( nCellsInColumn - 1 ) )
 						<Parameter>
 							<Name><![CDATA[condition]]></Name>
 							<Value Class="CodeValue">
-								<Code><![CDATA[layup.isProcessing()]]></Code>
+								<Code><![CDATA[predictQuality( evaType, currentAITime )]]></Code>
 							</Value>
 						</Parameter>
 						<Parameter>
@@ -10615,7 +10703,7 @@ hourOutput++;]]></Code>
 				<Group>
 					<Id>1520952878053</Id>
 					<Name><![CDATA[edgeSealingGroup]]></Name>
-					<X>730</X><Y>690</Y>
+					<X>700</X><Y>690</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -11229,7 +11317,7 @@ hourOutput++;]]></Code>
 				<Group>
 					<Id>1520343378336</Id>
 					<Name><![CDATA[trimmingGroup]]></Name>
-					<X>843</X><Y>700</Y>
+					<X>810</X><Y>700</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -13017,7 +13105,7 @@ agent.upsideDown = true;]]></Code>
 				<ConveyorSimpleStation>
 					<Id>1517230654739</Id>
 					<Name><![CDATA[edgeSealing]]></Name>
-					<X>750</X><Y>600</Y>
+					<X>720</X><Y>710</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -13183,7 +13271,7 @@ agent.upsideDown = true;]]></Code>
 						<QuantityColumn>
 						</QuantityColumn>
 					</EmbeddedObject>
-					<Offset>290.0</Offset>
+					<Offset>320.0</Offset>
 					<Length Class="UnitValue">
 						<Value Class="Double">3</Value>
 						<Unit Class="LengthUnits"><![CDATA[METER]]></Unit>
@@ -13197,7 +13285,7 @@ agent.upsideDown = true;]]></Code>
 				<ConveyorSimpleStation>
 					<Id>1517417905436</Id>
 					<Name><![CDATA[trimming]]></Name>
-					<X>900</X><Y>610</Y>
+					<X>840</X><Y>700</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -13392,7 +13480,7 @@ A trimming process begins, queue length reduces by 1*/]]></Code>
 						<QuantityColumn>
 						</QuantityColumn>
 					</EmbeddedObject>
-					<Offset>160.0</Offset>
+					<Offset>200.0</Offset>
 					<Length Class="UnitValue">
 						<Value Class="Double">3</Value>
 						<Unit Class="LengthUnits"><![CDATA[METER]]></Unit>
@@ -19977,7 +20065,7 @@ and positionOnConveyor2 */]]></Code>
 				<RectangleNode>
 					<Id>1517911694208</Id>
 					<Name><![CDATA[trimWorkzone]]></Name>
-					<X>810</X><Y>660</Y>
+					<X>880</X><Y>660</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>false</PresentationFlag>
@@ -20094,7 +20182,7 @@ and positionOnConveyor2 */]]></Code>
 				<Attractor>
 					<Id>1517911717141</Id>
 					<Name><![CDATA[attractor2]]></Name>
-					<X>830</X><Y>670</Y>
+					<X>900</X><Y>670</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -20448,7 +20536,7 @@ and positionOnConveyor2 */]]></Code>
 				<Group>
 					<Id>1517922440891</Id>
 					<Name><![CDATA[notes]]></Name>
-					<X>660</X><Y>430</Y>
+					<X>660</X><Y>440</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -20562,7 +20650,7 @@ and positionOnConveyor2 */]]></Code>
 				<Text>
 					<Id>1516356396735</Id>
 					<Name><![CDATA[text2]]></Name>
-					<X>220</X><Y>300</Y>
+					<X>170</X><Y>290</Y>
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -20583,7 +20671,7 @@ and positionOnConveyor2 */]]></Code>
 				<Polyline>
 					<Id>1516356396737</Id>
 					<Name><![CDATA[polyline2]]></Name>
-					<X>190</X><Y>300</Y>
+					<X>140</X><Y>290</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -20812,7 +20900,7 @@ and positionOnConveyor2 */]]></Code>
 				<Text>
 					<Id>1516790337178</Id>
 					<Name><![CDATA[text7]]></Name>
-					<X>83</X><Y>190</Y>
+					<X>40</X><Y>200</Y>
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -20833,7 +20921,7 @@ and positionOnConveyor2 */]]></Code>
 				<Polyline>
 					<Id>1516790337220</Id>
 					<Name><![CDATA[polyline7]]></Name>
-					<X>60</X><Y>240</Y>
+					<X>10</X><Y>240</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -24947,7 +25035,7 @@ ultra fast cure EVA：2]]></Text>
 				<Text>
 					<Id>1778465661539</Id>
 					<Name><![CDATA[text42]]></Name>
-					<X>-760</X><Y>1810</Y>
+					<X>-760</X><Y>1900</Y>
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
