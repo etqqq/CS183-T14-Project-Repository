@@ -1,3 +1,4 @@
+/***The creater of these codes is Huang Jingxuan.***/
 /**
  * Use the old  ONNX model to predict work time
  * It is used to contract with DNN model (A/B Testing)
@@ -35,6 +36,6 @@ public double predictLinearTime(double queueLength, double evaType) {
         predictedTime = 60.0 - queueLength * 0.5; 
     }
     
-    // 确保返回值为正数
+    // Ensure the value of the return is positive number
     return Math.max(predictedTime, 5.0); 
 }
