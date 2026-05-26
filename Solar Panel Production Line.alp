@@ -37,24 +37,15 @@ try {  //member Boyu Huang
 } catch (ai.onnxruntime.OrtException e) {
     traceln("ONNX loading failed:" + e.getMessage());
 }
-
+try {
+    sessionQC = env.createSession("predict_qc.onnx", new ai.onnxruntime.OrtSession.SessionOptions());
+} catch (Exception e) {
+    traceln("质检模型加载失败: " + e.getMessage());
+}
 /*testLogOutput.println("simTime,realQueueLength,evaType,dnnPredictedTime");
 test_VS_Output.println("simTime,realQueueLength,evaType,dnnPredictedTime,linearPredictedTime");*/]]></StartupCode>
 			<DestroyCode><![CDATA[/*testLogOutput.close();
-test_VS_Output.close();*/
-try {
-    java.io.FileWriter writer = new java.io.FileWriter("buffer_training_data.csv");
-    writer.write("timestamp,queue_length,inflow_rate,outflow_rate,net_flow,is_congested\n");
-    
-    for(Object row : trainingData) {
-        writer.write(row.toString() + "\n");
-    }
-    
-    writer.close();
-    traceln("成功导出 " + trainingData.size() + " 条训练数据到 buffer_training_data.csv");
-} catch (java.io.IOException e) {
-    traceln("导出失败: " + e.getMessage());
-}]]></DestroyCode>
+test_VS_Output.close();*/]]></DestroyCode>
 			<Generic>false</Generic>
 			<GenericParameter>
 				<Id>1516353518301</Id>
@@ -321,99 +312,36 @@ try {
 					</Properties>
 				</Variable>
 				<Variable Class="PlainVariable">
-					<Id>1778672079557</Id>
-					<Name><![CDATA[queueLengthHistory]]></Name>
-					<X>-1190</X><Y>1140</Y>
+					<Id>1778684116577</Id>
+					<Name><![CDATA[sessionQC]]></Name>
+					<X>-750</X><Y>1820</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
 					<ShowLabel>true</ShowLabel>
 					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
-						<Type><![CDATA[java.util.LinkedList]]></Type>        
-						<InitialValue Class="CodeValue">
-							<Code><![CDATA[new java.util.LinkedList()]]></Code>
-						</InitialValue>
+						<Type><![CDATA[ai.onnxruntime.OrtSession]]></Type>        
 					</Properties>
 				</Variable>
 				<Variable Class="PlainVariable">
-					<Id>1778672248791</Id>
-					<Name><![CDATA[enterCounter]]></Name>
-					<X>-1190</X><Y>1170</Y>
+					<Id>1778687246191</Id>
+					<Name><![CDATA[env]]></Name>
+					<X>-750</X><Y>1850</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
 					<ShowLabel>true</ShowLabel>
 					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
-						<Type><![CDATA[int]]></Type>        
+						<Type><![CDATA[ai.onnxruntime.OrtEnvironment]]></Type>        
 						<InitialValue Class="CodeValue">
-							<Code><![CDATA[0]]></Code>
+							<Code><![CDATA[ai.onnxruntime.OrtEnvironment.getEnvironment()]]></Code>
 						</InitialValue>
 					</Properties>
 				</Variable>
 				<Variable Class="PlainVariable">
-					<Id>1778672576731</Id>
-					<Name><![CDATA[exitCounter]]></Name>
-					<X>-1190</X><Y>1200</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
-						<Type><![CDATA[int]]></Type>        
-						<InitialValue Class="CodeValue">
-							<Code><![CDATA[0]]></Code>
-						</InitialValue>
-					</Properties>
-				</Variable>
-				<Variable Class="PlainVariable">
-					<Id>1778672667769</Id>
-					<Name><![CDATA[lastEnterCount]]></Name>
-					<X>-1190</X><Y>1230</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
-						<Type><![CDATA[int]]></Type>        
-						<InitialValue Class="CodeValue">
-							<Code><![CDATA[0]]></Code>
-						</InitialValue>
-					</Properties>
-				</Variable>
-				<Variable Class="PlainVariable">
-					<Id>1778672686477</Id>
-					<Name><![CDATA[lastExitCount]]></Name>
-					<X>-1190</X><Y>1260</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
-						<Type><![CDATA[int]]></Type>        
-						<InitialValue Class="CodeValue">
-							<Code><![CDATA[0]]></Code>
-						</InitialValue>
-					</Properties>
-				</Variable>
-				<Variable Class="PlainVariable">
-					<Id>1778672706108</Id>
-					<Name><![CDATA[trainingData]]></Name>
-					<X>-1190</X><Y>1290</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
-						<Type><![CDATA[java.util.ArrayList]]></Type>        
-						<InitialValue Class="CodeValue">
-							<Code><![CDATA[new java.util.ArrayList()]]></Code>
-						</InitialValue>
-					</Properties>
-				</Variable>
-				<Variable Class="PlainVariable">
-					<Id>1779029580869</Id>
-					<Name><![CDATA[sourceInterval]]></Name>
-					<X>-1190</X><Y>1320</Y>
+					<Id>1778687744115</Id>
+					<Name><![CDATA[currentAITime]]></Name>
+					<X>-750</X><Y>1880</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -421,22 +349,7 @@ try {
 					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
 						<Type><![CDATA[double]]></Type>        
 						<InitialValue Class="CodeValue">
-							<Code><![CDATA[1.0]]></Code>
-						</InitialValue>
-					</Properties>
-				</Variable>
-				<Variable Class="PlainVariable">
-					<Id>1779030865996</Id>
-					<Name><![CDATA[procetime]]></Name>
-					<X>-1190</X><Y>1340</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
-						<Type><![CDATA[double]]></Type>        
-						<InitialValue Class="CodeValue">
-							<Code><![CDATA[15.0]]></Code>
+							<Code><![CDATA[0]]></Code>
 						</InitialValue>
 					</Properties>
 				</Variable>
@@ -2114,130 +2027,6 @@ hourOutput = 0;]]></Action>
 if ( isFlipped )
 	flip.restart( flippingTime );]]></Action>
 				</Event>
-				<Event>
-					<Id>1778672128874</Id>
-					<Name><![CDATA[testEvent]]></Name>
-					<X>-1360</X><Y>1140</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Properties TriggerType="timeout" Mode="cyclic">
-						<Timeout Class="CodeUnitValue">
-							<Code><![CDATA[1]]></Code>
-							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
-						</Timeout>
-						<Rate Class="CodeUnitValue">
-							<Code><![CDATA[1]]></Code>
-							<Unit Class="RateUnits"><![CDATA[PER_SECOND]]></Unit>
-						</Rate>
-						<Id>1778672128872</Id>
-						<OccurrenceAtTime>true</OccurrenceAtTime>
-						<OccurrenceDate>1778745600000</OccurrenceDate>
-						<OccurrenceTime Class="CodeUnitValue">
-							<Code><![CDATA[0]]></Code>
-							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
-						</OccurrenceTime>
-						<RecurrenceCode Class="CodeUnitValue">
-							<Code><![CDATA[10.0]]></Code>
-							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
-						</RecurrenceCode>
-						<Condition><![CDATA[false]]></Condition>
-					</Properties>
-					<Action><![CDATA[// ========== 1. 数据采集 ==========
-double currentLength = (double) buffer.size();
-int enterDelta = enterCounter - lastEnterCount;
-int exitDelta = exitCounter - lastExitCount;
-lastEnterCount = enterCounter;
-lastExitCount = exitCounter;
-
-String dataRow = getEngine().getTime() + "," + 
-                 currentLength + "," + 
-                 enterDelta + "," + 
-                 exitDelta + "," + 
-                 (enterDelta - exitDelta) + "," + 
-                 (currentLength > 80 ? 1 : 0);
-trainingData.add(dataRow);
-
-// ========== 2. AI 预测 ==========
-double prob = 0.5;
-
-try {
-    ai.onnxruntime.OrtEnvironment env = ai.onnxruntime.OrtEnvironment.getEnvironment();
-    ai.onnxruntime.OrtSession session = env.createSession("lstm_buffer.onnx");
-    
-    float[][][] inputData = new float[1][5][4];
-    for (int i = 0; i < 5; i++) {
-        inputData[0][i][0] = (float) currentLength;
-        inputData[0][i][1] = (float) enterDelta;
-        inputData[0][i][2] = (float) exitDelta;
-        inputData[0][i][3] = (float) (enterDelta - exitDelta);
-    }
-    
-    ai.onnxruntime.OnnxTensor tensor = ai.onnxruntime.OnnxTensor.createTensor(env, inputData);
-    java.util.HashMap<String, ai.onnxruntime.OnnxTensor> inputs = new java.util.HashMap<>();
-    inputs.put("args_0:0", tensor);
-    
-    ai.onnxruntime.OrtSession.Result result = session.run(inputs);
-    float[][] output = (float[][]) result.get(0).getValue();
-    prob = output[0][0];
-    
-    tensor.close();
-    result.close();
-    session.close();
-    
-} catch (Exception e) {
-    prob = 0.5;
-}
-
-// ========== 3. 预警 + 优化 ==========
-if (prob > 0.48 || currentLength > 85) {
-    traceln("🔴🔴🔴 拥堵预警！");
-    
-    // 优化1：增加 layup 容量
-    try {
-        if (layup.getCapacity() < 2) {
-            layup.setCapacity(2);
-            traceln("⚙️ layup 容量: 1 → 2");
-        }
-    } catch (Exception e) {}
-    
-    // 优化2：减小批处理大小
-    try {
-        if (nCellsInRow > 3) {
-            nCellsInRow = 3;
-            traceln("⚙️ 批大小: 10 → " + nCellsInRow);
-        }
-    } catch (Exception e) {}
-    
-    // 优化3：减少 flippingStation 加工时间
-    if (procetime > 6) {
-        procetime = 10;
-        traceln("⚙️ flippingStation 加工时间: 15秒 → 6秒");
-    }
-    
-} else if (currentLength < 50 && prob < 0.4) {
-    // 恢复 layup 容量
-    try {
-        if (layup.getCapacity() > 1) {
-            layup.setCapacity(1);
-            traceln("✅ layup 容量: 2 → 1");
-        }
-    } catch (Exception e) {}
-    
-    // 恢复批大小
-    if (nCellsInRow < 10) {
-        nCellsInRow = 10;
-        traceln("✅ 批大小: 3 → 10");
-    }
-    
-    // 恢复 flippingStation 加工时间
-    if (procetime < 15) {
-        procetime = 15;
-        traceln("✅ flippingStation 加工时间: 6秒 → 15秒");
-    }
-}]]></Action>
-				</Event>
 			</Events>
 			<Functions>
 				<Function AccessType="default" StaticFunction="false">
@@ -2417,7 +2206,7 @@ return Math.max(predictedTime, 0.1);]]></Body>
 					<ReturnType><![CDATA[double]]></ReturnType>
 					<Id>1778465687326</Id>
 					<Name><![CDATA[advancedPredictTrimmingTime]]></Name>
-					<X>-750</X><Y>1850</Y>
+					<X>-750</X><Y>1940</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -2470,48 +2259,44 @@ return predictedTime;]]></Body>
 				</Function>
 				<Function AccessType="default" StaticFunction="false">
 					<ReturnModificator>RETURNS_VALUE</ReturnModificator>
-					<ReturnType><![CDATA[double]]></ReturnType>
-					<Id>1778689575399</Id>
-					<Name><![CDATA[predictCongestion]]></Name>
-					<X>-1360</X><Y>1170</Y>
+					<ReturnType><![CDATA[boolean]]></ReturnType>
+					<Id>1778684254517</Id>
+					<Name><![CDATA[predictQuality]]></Name>
+					<X>-750</X><Y>1970</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
 					<ShowLabel>true</ShowLabel>
 					<Parameter>
-						<Name><![CDATA[features]]></Name>
-						<Type><![CDATA[double[][]]]></Type>
+						<Name><![CDATA[evaType]]></Name>
+						<Type><![CDATA[double]]></Type>
+					</Parameter>
+					<Parameter>
+						<Name><![CDATA[trimmingTime]]></Name>
+						<Type><![CDATA[double]]></Type>
 					</Parameter>
 					<Body><![CDATA[try {
-    // 使用完整包名
-    ai.onnxruntime.OrtEnvironment env = ai.onnxruntime.OrtEnvironment.getEnvironment();
-    ai.onnxruntime.OrtSession session = env.createSession("lstm_buffer.onnx");
+    // 1. 准备二维数据
+    float[][] inputData = new float[1][2];
+    inputData[0][0] = (float) evaType;
+    inputData[0][1] = (float) trimmingTime;
+
+    // 2. 运行 AI 大脑
+    ai.onnxruntime.OnnxTensor tensor = ai.onnxruntime.OnnxTensor.createTensor(env, inputData); 
+    ai.onnxruntime.OrtSession.Result result = sessionQC.run(java.util.Collections.singletonMap("input", tensor));
+
+    // 3. 提取结果
+    long[] labels = (long[]) result.get(0).getValue();
     
-    float[][][] inputData = new float[1][5][4];
-    for (int i = 0; i < 5; i++) {
-        inputData[0][i][0] = (float) features[i][0];
-        inputData[0][i][1] = (float) features[i][1];
-        inputData[0][i][2] = (float) features[i][2];
-        inputData[0][i][3] = (float) features[i][3];
-    }
-    
-    ai.onnxruntime.OnnxTensor tensor = ai.onnxruntime.OnnxTensor.createTensor(env, inputData);
-    java.util.HashMap<String, ai.onnxruntime.OnnxTensor> inputs = new java.util.HashMap<>();
-    inputs.put("args_0:0", tensor);
-    
-    ai.onnxruntime.OrtSession.Result result = session.run(inputs);
-    
-    float[][] output = (float[][]) result.get(0).getValue();
-    double probability = output[0][0];
-    
-    result.close();
-    session.close();
-    
-    return probability;
-    
-} catch (Exception e) {
-    traceln("ONNX预测失败: " + e.getMessage());
-    return 0.5;
+    // 【关键新增！】如果 AI 成功了，让它在控制台大喊一声！
+    traceln("🔥 AI 质检完毕！材料:" + evaType + " 耗时:" + trimmingTime + " 结果:" + (labels[0] == 1 ? "【合格】" : "【报废】"));
+
+    return labels[0] == 1; 
+
+} catch (Throwable e) { 
+    // 如果报错，拦截并打印
+    traceln("❌ 拦截到致命错误: " + e.toString());
+    return true; 
 }]]></Body>
 				</Function>
 			</Functions>
@@ -6127,7 +5912,7 @@ if ( layup.getAgent( 0 ).nLayup == ( nCellsInColumn - 1 ) )
 						<Parameter>
 							<Name><![CDATA[condition]]></Name>
 							<Value Class="CodeValue">
-								<Code><![CDATA[layup.isProcessing()]]></Code>
+								<Code><![CDATA[predictQuality( evaType, currentAITime )]]></Code>
 							</Value>
 						</Parameter>
 						<Parameter>
@@ -8479,7 +8264,7 @@ if ( layup.getAgent( 0 ).nLayup == ( nCellsInColumn - 1 ) )
 						<Parameter>
 							<Name><![CDATA[interarrivalTime]]></Name>
 							<Value Class="CodeUnitValue">
-								<Code><![CDATA[sourceInterval]]></Code>
+								<Code><![CDATA[1]]></Code>
 								<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
 							</Value>
 						</Parameter>
@@ -8954,18 +8739,12 @@ if ( layup.getAgent( 0 ).nLayup == ( nCellsInColumn - 1 ) )
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onEnter]]></Name>
-							<Value Class="CodeValue">
-								<Code><![CDATA[enterCounter++;]]></Code>
-							</Value>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onAtExit]]></Name>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onExit]]></Name>
-							<Value Class="CodeValue">
-								<Code><![CDATA[exitCounter++;]]></Code>
-							</Value>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onExitTimeout]]></Name>
@@ -9586,59 +9365,6 @@ hourOutput++;]]></Code>
 					<InitializationType>SPECIFIED_NUMBER</InitializationType>
 					<InitializationDatabaseTableQuery>
 						<Id>1761218256881</Id>
-						<TableReference>
-						</TableReference>
-					</InitializationDatabaseTableQuery>
-					<InitializationDatabaseType>ONE_AGENT_PER_DATABASE_RECORD</InitializationDatabaseType>
-					<QuantityColumn>
-					</QuantityColumn>
-				</EmbeddedObject>
-				<EmbeddedObject>
-					<Id>1778688767077</Id>
-					<Name><![CDATA[onnxHelper]]></Name>
-					<X>-1320</X><Y>1250</Y>
-					<Label><X>-55</X><Y>-30</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<PresentationId>1778689246610</PresentationId>
-					<ActiveObjectClass>
-						<PackageName><![CDATA[onnx_wrapper]]></PackageName>
-						<ClassName><![CDATA[OnnxHelper]]></ClassName>
-					</ActiveObjectClass>
-					<GenericParameterSubstitute>
-						<GenericParameterSubstituteReference>
-							<PackageName><![CDATA[onnx_wrapper]]></PackageName>
-							<ClassName><![CDATA[OnnxHelper]]></ClassName>
-							<ItemName><![CDATA[1637182964285]]></ItemName>
-						</GenericParameterSubstituteReference>
-					</GenericParameterSubstitute>
-					<Parameters>
-						<Parameter>
-							<Name><![CDATA[targetModel]]></Name>
-							<Value Class="CodeValue">
-								<Code><![CDATA["C:\\Users\\asus\\Models\\新建文件夹\\lstm_buffer.onnx"]]></Code>
-							</Value>
-						</Parameter>
-					</Parameters>
-					<ReplicationFlag>false</ReplicationFlag>
-					<Replication Class="CodeValue">
-						<Code><![CDATA[100]]></Code>
-					</Replication>
-					<CollectionType>ARRAY_LIST_BASED</CollectionType>
-					<InitialLocationType>XYZ</InitialLocationType>
-					<ColumnCode Class="CodeValue">
-						<Code><![CDATA[0]]></Code>
-					</ColumnCode>
-					<RowCode Class="CodeValue">
-						<Code><![CDATA[0]]></Code>
-					</RowCode>
-					<LocationNameCode Class="CodeValue">
-						<Code><![CDATA[""]]></Code>
-					</LocationNameCode>
-					<InitializationType>SPECIFIED_NUMBER</InitializationType>
-					<InitializationDatabaseTableQuery>
-						<Id>1778688767075</Id>
 						<TableReference>
 						</TableReference>
 					</InitializationDatabaseTableQuery>
@@ -10561,7 +10287,7 @@ hourOutput++;]]></Code>
 							<Parameter>
 								<Name><![CDATA[processTime]]></Name>
 								<Value Class="CodeUnitValue">
-									<Code><![CDATA[procetime]]></Code>
+									<Code><![CDATA[15]]></Code>
 									<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
 								</Value>
 							</Parameter>
@@ -10977,7 +10703,7 @@ hourOutput++;]]></Code>
 				<Group>
 					<Id>1520952878053</Id>
 					<Name><![CDATA[edgeSealingGroup]]></Name>
-					<X>730</X><Y>690</Y>
+					<X>700</X><Y>690</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -11591,7 +11317,7 @@ hourOutput++;]]></Code>
 				<Group>
 					<Id>1520343378336</Id>
 					<Name><![CDATA[trimmingGroup]]></Name>
-					<X>843</X><Y>700</Y>
+					<X>810</X><Y>700</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -13379,7 +13105,7 @@ agent.upsideDown = true;]]></Code>
 				<ConveyorSimpleStation>
 					<Id>1517230654739</Id>
 					<Name><![CDATA[edgeSealing]]></Name>
-					<X>750</X><Y>600</Y>
+					<X>720</X><Y>710</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -13545,7 +13271,7 @@ agent.upsideDown = true;]]></Code>
 						<QuantityColumn>
 						</QuantityColumn>
 					</EmbeddedObject>
-					<Offset>290.0</Offset>
+					<Offset>320.0</Offset>
 					<Length Class="UnitValue">
 						<Value Class="Double">3</Value>
 						<Unit Class="LengthUnits"><![CDATA[METER]]></Unit>
@@ -13559,7 +13285,7 @@ agent.upsideDown = true;]]></Code>
 				<ConveyorSimpleStation>
 					<Id>1517417905436</Id>
 					<Name><![CDATA[trimming]]></Name>
-					<X>900</X><Y>610</Y>
+					<X>840</X><Y>700</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -13754,7 +13480,7 @@ A trimming process begins, queue length reduces by 1*/]]></Code>
 						<QuantityColumn>
 						</QuantityColumn>
 					</EmbeddedObject>
-					<Offset>160.0</Offset>
+					<Offset>200.0</Offset>
 					<Length Class="UnitValue">
 						<Value Class="Double">3</Value>
 						<Unit Class="LengthUnits"><![CDATA[METER]]></Unit>
@@ -15794,7 +15520,7 @@ and positionOnConveyor3 */]]></Code>
 							<Parameter>
 								<Name><![CDATA[maxSpeed]]></Name>
 								<Value Class="CodeUnitValue">
-									<Code><![CDATA[1.0]]></Code>
+									<Code><![CDATA[0.25]]></Code>
 									<Unit Class="SpeedUnits"><![CDATA[MPS]]></Unit>
 								</Value>
 							</Parameter>
@@ -20339,7 +20065,7 @@ and positionOnConveyor2 */]]></Code>
 				<RectangleNode>
 					<Id>1517911694208</Id>
 					<Name><![CDATA[trimWorkzone]]></Name>
-					<X>810</X><Y>660</Y>
+					<X>880</X><Y>660</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>false</PresentationFlag>
@@ -20456,7 +20182,7 @@ and positionOnConveyor2 */]]></Code>
 				<Attractor>
 					<Id>1517911717141</Id>
 					<Name><![CDATA[attractor2]]></Name>
-					<X>830</X><Y>670</Y>
+					<X>900</X><Y>670</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -20810,7 +20536,7 @@ and positionOnConveyor2 */]]></Code>
 				<Group>
 					<Id>1517922440891</Id>
 					<Name><![CDATA[notes]]></Name>
-					<X>660</X><Y>430</Y>
+					<X>660</X><Y>440</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -20924,7 +20650,7 @@ and positionOnConveyor2 */]]></Code>
 				<Text>
 					<Id>1516356396735</Id>
 					<Name><![CDATA[text2]]></Name>
-					<X>220</X><Y>300</Y>
+					<X>170</X><Y>290</Y>
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -20945,7 +20671,7 @@ and positionOnConveyor2 */]]></Code>
 				<Polyline>
 					<Id>1516356396737</Id>
 					<Name><![CDATA[polyline2]]></Name>
-					<X>190</X><Y>300</Y>
+					<X>140</X><Y>290</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -21174,7 +20900,7 @@ and positionOnConveyor2 */]]></Code>
 				<Text>
 					<Id>1516790337178</Id>
 					<Name><![CDATA[text7]]></Name>
-					<X>83</X><Y>190</Y>
+					<X>40</X><Y>200</Y>
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -21195,7 +20921,7 @@ and positionOnConveyor2 */]]></Code>
 				<Polyline>
 					<Id>1516790337220</Id>
 					<Name><![CDATA[polyline7]]></Name>
-					<X>60</X><Y>240</Y>
+					<X>10</X><Y>240</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -25309,7 +25035,7 @@ ultra fast cure EVA：2]]></Text>
 				<Text>
 					<Id>1778465661539</Id>
 					<Name><![CDATA[text42]]></Name>
-					<X>-760</X><Y>1810</Y>
+					<X>-760</X><Y>1900</Y>
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -25436,24 +25162,6 @@ length]]></Text>
 					</Font>
 					<Alignment>LEFT</Alignment>
 				</Text>
-				<EmbeddedObjectPresentation>
-					<Id>1778689246610</Id>
-					<Name><![CDATA[onnxHelper_presentation]]></Name>
-					<X>0</X><Y>0</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<ScaleType>AUTOMATICALLY_CALCULATED</ScaleType>
-					<GISScaleForRealEmbeddedObjectPresentationSize>1000</GISScaleForRealEmbeddedObjectPresentationSize>
-					<GISScaleForFixedEmbeddedObjectPresentationSize>1000000000</GISScaleForFixedEmbeddedObjectPresentationSize>
-					<Latitude>0.0</Latitude>
-					<Longitude>0.0</Longitude>
-				</EmbeddedObjectPresentation>
 			</Presentation>
 
 				</Level>
@@ -31009,12 +30717,6 @@ laminator) are built using state charts.]]></Text>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
-		<Resource>
-			<Id>1778687815286</Id>
-			<Path><![CDATA[OnnxHelperLibrary.jar]]></Path>
-			<ReferencedFromUserCode>false</ReferencedFromUserCode>
-			<Location>FILE_SYSTEM</Location>
-		</Resource>
 	</ModelResources>
     <RequiredLibraryReference>
 		<LibraryName><![CDATA[com.anylogic.libraries.material_handling]]></LibraryName>
@@ -31034,24 +30736,10 @@ laminator) are built using state charts.]]></Text>
 		<VersionMinor>0</VersionMinor>
 		<VersionBuild>0</VersionBuild>
     </RequiredLibraryReference>
-    <RequiredLibraryReference>
-		<LibraryName><![CDATA[onnx_wrapper]]></LibraryName>
-		<VersionMajor>2</VersionMajor>
-		<VersionMinor>1</VersionMinor>
-		<VersionBuild>1</VersionBuild>
-    </RequiredLibraryReference>
 	<ClassPathEntry>
 		<ResourceReference>
 			<PackageName><![CDATA[solar_panel_production_line]]></PackageName>
 			<ClassName><![CDATA[onnxruntime-1.15.1.jar]]></ClassName>
-		</ResourceReference>
-		<Imported>true</Imported>
-		<Folder>false</Folder>
-	</ClassPathEntry>
-	<ClassPathEntry>
-		<ResourceReference>
-			<PackageName><![CDATA[solar_panel_production_line]]></PackageName>
-			<ClassName><![CDATA[OnnxHelperLibrary.jar]]></ClassName>
 		</ResourceReference>
 		<Imported>true</Imported>
 		<Folder>false</Folder>
