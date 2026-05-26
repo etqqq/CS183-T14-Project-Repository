@@ -1,0 +1,8 @@
+queue_length_min=0.0
+queue_length_range=100.0
+inflow_rate_min=0.0
+inflow_rate_range=10.0
+outflow_rate_min=0.0
+outflow_rate_range=9.0
+net_flow_min=0.0
+net_flow_range=10.0
