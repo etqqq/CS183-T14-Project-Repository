@@ -353,6 +353,21 @@ test_VS_Output.close();*/]]></DestroyCode>
 						</InitialValue>
 					</Properties>
 				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1780109885512</Id>
+					<Name><![CDATA[procetime]]></Name>
+					<X>-1140</X><Y>1090</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[15.0]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
 				<Variable Class="Parameter">
 					<Id>1516869486601</Id>
 					<Name><![CDATA[glassCleaningTime]]></Name>
@@ -2027,6 +2042,98 @@ hourOutput = 0;]]></Action>
 if ( isFlipped )
 	flip.restart( flippingTime );]]></Action>
 				</Event>
+				<Event>
+					<Id>1780110392697</Id>
+					<Name><![CDATA[testEvent]]></Name>
+					<X>-1140</X><Y>1120</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties TriggerType="timeout" Mode="cyclic">
+						<Timeout Class="CodeUnitValue">
+							<Code><![CDATA[1]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</Timeout>
+						<Rate Class="CodeUnitValue">
+							<Code><![CDATA[1]]></Code>
+							<Unit Class="RateUnits"><![CDATA[PER_SECOND]]></Unit>
+						</Rate>
+						<Id>1780110392695</Id>
+						<OccurrenceAtTime>true</OccurrenceAtTime>
+						<OccurrenceDate>1780128000000</OccurrenceDate>
+						<OccurrenceTime Class="CodeUnitValue">
+							<Code><![CDATA[0]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</OccurrenceTime>
+						<RecurrenceCode Class="CodeUnitValue">
+							<Code><![CDATA[10]]></Code>
+							<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
+						</RecurrenceCode>
+						<Condition><![CDATA[false]]></Condition>
+					</Properties>
+					<Action><![CDATA[// member gan zhichen
+// ========== 1. Get Current Queue Length ==========
+double currentLength = (double) buffer.size();
+
+// ========== 2. AI Prediction ==========
+double prob = predictCongestion();
+
+// ========== 3. Alert + Optimization ==========
+if (prob > 0.48 || currentLength > 85) {
+    traceln("CONGESTION ALERT!");
+    
+    // Optimization 1: Increase layup capacity
+    try {
+        if (layup.getCapacity() < 2) {
+            layup.setCapacity(2);
+            traceln("  OPT: layup capacity -> 2");
+        }
+    } catch (Exception e) {}
+    
+    // Optimization 2: Reduce batch size
+    try {
+        if (nCellsInRow > 3) {
+            nCellsInRow = 3;
+            traceln("  OPT: batch size -> 3");
+        }
+    } catch (Exception e) {}
+    
+    // Optimization 3: Reduce flippingStation time
+    if (procetime > 6) {
+        procetime = 6;
+        traceln("  OPT: flippingStation time -> 6 sec");
+    }
+    
+} else if (currentLength < 50 && prob < 0.4) {
+    // Restore
+    boolean restored = false;
+    
+    try {
+        if (layup.getCapacity() > 1) {
+            layup.setCapacity(1);
+            traceln("  RESTORE: layup capacity -> 1");
+            restored = true;
+        }
+    } catch (Exception e) {}
+    
+    if (nCellsInRow < 10) {
+        nCellsInRow = 10;
+        traceln("  RESTORE: batch size -> 10");
+        restored = true;
+    }
+    
+    if (procetime < 15) {
+        procetime = 15;
+        traceln("  RESTORE: flippingStation time -> 15 sec");
+        restored = true;
+    }
+    
+    if (restored) {
+        traceln("System restored to normal");
+    }
+}]]></Action>
+				</Event>
 			</Events>
 			<Functions>
 				<Function AccessType="default" StaticFunction="false">
@@ -2297,6 +2404,61 @@ return predictedTime;]]></Body>
     // 如果报错，拦截并打印
     traceln("❌ 拦截到致命错误: " + e.toString());
     return true; 
+}]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>RETURNS_VALUE</ReturnModificator>
+					<ReturnType><![CDATA[double]]></ReturnType>
+					<Id>1780110329656</Id>
+					<Name><![CDATA[predictCongestion]]></Name>
+					<X>-1140</X><Y>1140</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Body><![CDATA[// member gan zhichen
+try {
+    // Create ONNX Runtime environment
+    ai.onnxruntime.OrtEnvironment env = ai.onnxruntime.OrtEnvironment.getEnvironment();
+    
+    // Load the ONNX model
+    ai.onnxruntime.OrtSession session = env.createSession("lstm_buffer.onnx");
+    
+    // Get current queue length
+    double currentLength = (double) buffer.size();
+    
+    // Prepare input data tensor with shape [1, 5, 4]
+    float[][][] inputData = new float[1][5][4];
+    for (int i = 0; i < 5; i++) {
+        inputData[0][i][0] = (float) currentLength;
+        inputData[0][i][1] = 0;
+        inputData[0][i][2] = 0;
+        inputData[0][i][3] = 0;
+    }
+    
+    // Create ONNX tensor from input data
+    ai.onnxruntime.OnnxTensor tensor = ai.onnxruntime.OnnxTensor.createTensor(env, inputData);
+    
+    // Create input map with the model's expected input name
+    java.util.HashMap<String, ai.onnxruntime.OnnxTensor> inputs = new java.util.HashMap<>();
+    inputs.put("args_0:0", tensor);
+    
+    // Run inference
+    ai.onnxruntime.OrtSession.Result result = session.run(inputs);
+    
+    // Extract prediction from output tensor
+    float[][] output = (float[][]) result.get(0).getValue();
+    double probability = output[0][0];
+    
+    // Clean up resources
+    result.close();
+    session.close();
+    
+    return probability;
+    
+} catch (Exception e) {
+    traceln("ONNX prediction failed: " + e.getMessage());
+    return 0.5;
 }]]></Body>
 				</Function>
 			</Functions>
@@ -9372,6 +9534,58 @@ hourOutput++;]]></Code>
 					<QuantityColumn>
 					</QuantityColumn>
 				</EmbeddedObject>
+				<EmbeddedObject>
+					<Id>1780109842325</Id>
+					<Name><![CDATA[onnxHelper]]></Name>
+					<X>-1100</X><Y>1200</Y>
+					<Label><X>-45</X><Y>-35</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<ActiveObjectClass>
+						<PackageName><![CDATA[onnx_wrapper]]></PackageName>
+						<ClassName><![CDATA[OnnxHelper]]></ClassName>
+					</ActiveObjectClass>
+					<GenericParameterSubstitute>
+						<GenericParameterSubstituteReference>
+							<PackageName><![CDATA[onnx_wrapper]]></PackageName>
+							<ClassName><![CDATA[OnnxHelper]]></ClassName>
+							<ItemName><![CDATA[1637182964285]]></ItemName>
+						</GenericParameterSubstituteReference>
+					</GenericParameterSubstitute>
+					<Parameters>
+						<Parameter>
+							<Name><![CDATA[targetModel]]></Name>
+							<Value Class="CodeValue">
+								<Code><![CDATA["C:\\Users\\asus\\Desktop\\CS183-T14-Project-Repository-main\\lstm_buffer.onnx"]]></Code>
+							</Value>
+						</Parameter>
+					</Parameters>
+					<ReplicationFlag>false</ReplicationFlag>
+					<Replication Class="CodeValue">
+						<Code><![CDATA[100]]></Code>
+					</Replication>
+					<CollectionType>ARRAY_LIST_BASED</CollectionType>
+					<InitialLocationType>XYZ</InitialLocationType>
+					<ColumnCode Class="CodeValue">
+						<Code><![CDATA[0]]></Code>
+					</ColumnCode>
+					<RowCode Class="CodeValue">
+						<Code><![CDATA[0]]></Code>
+					</RowCode>
+					<LocationNameCode Class="CodeValue">
+						<Code><![CDATA[""]]></Code>
+					</LocationNameCode>
+					<InitializationType>SPECIFIED_NUMBER</InitializationType>
+					<InitializationDatabaseTableQuery>
+						<Id>1780109842323</Id>
+						<TableReference>
+						</TableReference>
+					</InitializationDatabaseTableQuery>
+					<InitializationDatabaseType>ONE_AGENT_PER_DATABASE_RECORD</InitializationDatabaseType>
+					<QuantityColumn>
+					</QuantityColumn>
+				</EmbeddedObject>
 			</EmbeddedObjects>
 
 			<Presentation>
@@ -10287,7 +10501,7 @@ hourOutput++;]]></Code>
 							<Parameter>
 								<Name><![CDATA[processTime]]></Name>
 								<Value Class="CodeUnitValue">
-									<Code><![CDATA[15]]></Code>
+									<Code><![CDATA[procetime]]></Code>
 									<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
 								</Value>
 							</Parameter>
@@ -30717,6 +30931,12 @@ laminator) are built using state charts.]]></Text>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
+		<Resource>
+			<Id>1780116348250</Id>
+			<Path><![CDATA[OnnxHelperLibrary.jar]]></Path>
+			<ReferencedFromUserCode>false</ReferencedFromUserCode>
+			<Location>FILE_SYSTEM</Location>
+		</Resource>
 	</ModelResources>
     <RequiredLibraryReference>
 		<LibraryName><![CDATA[com.anylogic.libraries.material_handling]]></LibraryName>
@@ -30740,6 +30960,14 @@ laminator) are built using state charts.]]></Text>
 		<ResourceReference>
 			<PackageName><![CDATA[solar_panel_production_line]]></PackageName>
 			<ClassName><![CDATA[onnxruntime-1.15.1.jar]]></ClassName>
+		</ResourceReference>
+		<Imported>true</Imported>
+		<Folder>false</Folder>
+	</ClassPathEntry>
+	<ClassPathEntry>
+		<ResourceReference>
+			<PackageName><![CDATA[solar_panel_production_line]]></PackageName>
+			<ClassName><![CDATA[OnnxHelperLibrary.jar]]></ClassName>
 		</ResourceReference>
 		<Imported>true</Imported>
 		<Folder>false</Folder>
