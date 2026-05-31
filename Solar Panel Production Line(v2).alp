@@ -7,7 +7,7 @@
 <AnyLogicWorkspace WorkspaceVersion="1.9" AnyLogicVersion="8.9.8.202602271015" AlpVersion="8.9.7">
 <Model>
 	<Id>1516353518244</Id>
-	<Name><![CDATA[Solar Panel Production Line]]></Name>
+	<Name><![CDATA[Solar Panel Production Line(v2)]]></Name>
 	<Description><![CDATA[In this model solar cells are assembled by the stringer machine and placed on a specially prepared glass by the layup system. Next, the glass module with solar cells is conveyed through a sequence of processing, assembly, and quality assurance stations, transforming it into solar panel. Finished solar panels are gathered into batches and taken away by forklift. The model focuses on the different uses of the Station markup elements that can be included in a conveyor network built with the Material Handling Library. Simple automatic processing is simulated by delays for defined periods of time. Manual operations are represented by stations with the bound resources. The complicated behavior of the inline machines (e.g. framing station, laminator) are built using state charts.]]></Description>
 	<EngineVersion>6</EngineVersion>
 	<JavaPackageName><![CDATA[solar_panel_production_line]]></JavaPackageName>
@@ -365,6 +365,21 @@ test_VS_Output.close();*/]]></DestroyCode>
 						<Type><![CDATA[double]]></Type>        
 						<InitialValue Class="CodeValue">
 							<Code><![CDATA[15.0]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1780241771936</Id>
+					<Name><![CDATA[currentBufferCapacity]]></Name>
+					<X>-480</X><Y>1790</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[int]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[20]]></Code>
 						</InitialValue>
 					</Properties>
 				</Variable>
@@ -2072,18 +2087,26 @@ if ( isFlipped )
 						</RecurrenceCode>
 						<Condition><![CDATA[false]]></Condition>
 					</Properties>
-					<Action><![CDATA[// member gan zhichen
-// ========== 1. Get Current Queue Length ==========
-double currentLength = (double) buffer.size();
+					<Action><![CDATA[// member gan zhichen & Nick
+// ========== 1. 获取当前状态与 AI 预测值 (只声明一次) ==========
+double currentLength = (double) buffer.size(); 
+double prob = predictCongestion();            
 
-// ========== 2. AI Prediction ==========
-double prob = predictCongestion();
+// ========== 2. 状态分支控制：高风险 / 中风险 / 安全状态 ==========
 
-// ========== 3. Alert + Optimization ==========
 if (prob > 0.48 || currentLength > 85) {
-    traceln("CONGESTION ALERT!");
+    traceln("[CONGESTION ALERT]");
     
-    // Optimization 1: Increase layup capacity
+    // 2.1 前端控流与物理设备降速 (防止物料继续堆积)
+    feedingEVASheetTime = 20.0; 
+    traceln("  OPT: feedingEVASheetTime -> 20.0 sec");
+    
+    if (procetime > 6) {
+        procetime = 6;
+        traceln("  OPT: flippingStation time -> 6 sec");
+    }
+    
+    // 2.2 提升前段机械臂能力 (原有优化逻辑)
     try {
         if (layup.getCapacity() < 2) {
             layup.setCapacity(2);
@@ -2091,23 +2114,39 @@ if (prob > 0.48 || currentLength > 85) {
         }
     } catch (Exception e) {}
     
-    // Optimization 2: Reduce batch size
-    try {
-        if (nCellsInRow > 3) {
-            nCellsInRow = 3;
-            traceln("  OPT: batch size -> 3");
-        }
-    } catch (Exception e) {}
-    
-    // Optimization 3: Reduce flippingStation time
-    if (procetime > 6) {
-        procetime = 6;
-        traceln("  OPT: flippingStation time -> 6 sec");
+    // 2.3 减小单次批处理大小
+    if (nCellsInRow > 3) {
+        nCellsInRow = 3;
+        traceln("  OPT: batch size -> 3");
     }
     
+    // 2.4 层压机工艺提速消纳
+    if (evaType != 2) {
+        evaType = 2;
+        traceln("  OPT: laminator -> Ultra Fast Cure");
+    }
+
+} else if (prob > 0.25 || currentLength > 50) {
+    // 【中风险状态】：流控平滑过渡
+    feedingEVASheetTime = 15.0;
+    traceln("  WARN: feedingEVASheetTime -> 15.0 sec");
+    
+    if (evaType != 1) {
+        evaType = 1;
+        traceln("  WARN: laminator -> Fast Cure");
+    }
+
 } else if (currentLength < 50 && prob < 0.4) {
-    // Restore
+    // 【安全正常状态】：恢复最高速生产与最佳品质
     boolean restored = false;
+    
+    feedingEVASheetTime = 10.0;
+    
+    if (evaType != 0) {
+        evaType = 0;
+        traceln("  RESTORE: laminator -> Standard Cure");
+        restored = true;
+    }
     
     try {
         if (layup.getCapacity() > 1) {
@@ -2132,6 +2171,17 @@ if (prob > 0.48 || currentLength > 85) {
     if (restored) {
         traceln("System restored to normal");
     }
+}
+
+// ========== 3. Buffer 弹性库容控制 (独立逻辑，不使用未定义变量) ==========
+if (prob > 0.60 && currentLength >= 18) {
+    // 库容告急，直接通过内置方法把上限拉大到 35
+    buffer.set_capacity(35); 
+    traceln("  BUFFER ALERT: capacity expanded to 35");
+} else if (prob < 0.20 && currentLength < 10) {
+    // 产线通畅，收回弹性库容，标准容量恢复为 20
+    buffer.set_capacity(20);
+    traceln("  BUFFER NORMAL: capacity restored to 20");
 }]]></Action>
 				</Event>
 			</Events>
@@ -16809,7 +16859,7 @@ if ( waitForGlassDelivery.size() > 0 )
 							<Parameter>
 								<Name><![CDATA[processTime]]></Name>
 								<Value Class="CodeUnitValue">
-									<Code><![CDATA[feedingEVASheetTime * 2]]></Code>
+									<Code><![CDATA[feedingEVASheetTime]]></Code>
 									<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
 								</Value>
 							</Parameter>
@@ -19586,7 +19636,7 @@ laminator.get( 2 ).receive( "open" );]]></Code>
 							<Parameter>
 								<Name><![CDATA[processTime]]></Name>
 								<Value Class="CodeUnitValue">
-									<Code><![CDATA[coolingTime]]></Code>
+									<Code><![CDATA[(evaType == 2) ? 20.0 : ((evaType == 1) ? 30.0 : 45.0)]]></Code>
 									<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
 								</Value>
 							</Parameter>
