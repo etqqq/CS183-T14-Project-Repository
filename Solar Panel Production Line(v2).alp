@@ -684,7 +684,7 @@ traceln("All DQN AI resources have been safely unloaded. The project lifecycle i
 					<Id>1516354284235</Id>
 					<Name><![CDATA[elTesterExpositionTime]]></Name>
 					<X>-500</X><Y>1170</Y>
-					<Label><X>10</X><Y>0</Y></Label>
+					<Label><X>0</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
 					<ShowLabel>true</ShowLabel>
@@ -2188,6 +2188,8 @@ hourOutput = 0;]]></Action>
 				<Event>
 					<Id>1528531983157</Id>
 					<Name><![CDATA[flip]]></Name>
+					<Description><![CDATA[Member Dongjin Yang
+This code is a typical toggle‑and‑animate pattern, often used for flipping a card, a switch, or any UI element that has two visual states.]]></Description>
 					<X>-250</X><Y>1700</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
@@ -2222,7 +2224,8 @@ if ( isFlipped )
 				<Event>
 					<Id>1780110392697</Id>
 					<Name><![CDATA[testEvent]]></Name>
-					<Description><![CDATA[1.Predictive & Proactive Control: Traditional manufacturing lines only react after a total breakdown occurs (e.g., when the buffer overflows). Our system uses AI to detect upcoming risks early; even if the current queue is only 60, if the AI predicts high congestion (prob > 0.48), the system preemptively mitigates the risk.
+					<Description><![CDATA[Member Yang Dongjin and
+1.Predictive & Proactive Control: Traditional manufacturing lines only react after a total breakdown occurs (e.g., when the buffer overflows). Our system uses AI to detect upcoming risks early; even if the current queue is only 60, if the AI predicts high congestion (prob > 0.48), the system preemptively mitigates the risk.
 
  2.High Engineering Robustness: Modifying AnyLogic hardware parameters (like layup.setCapacity) during active simulation can cause data collisions. The extensive use of try-catch blocks ensures the simulation engine is highly fault-tolerant and will not crash during sudden state changes.
 
@@ -2584,7 +2587,8 @@ return predictedTime;]]></Body>
 					<ReturnType><![CDATA[boolean]]></ReturnType>
 					<Id>1778684254517</Id>
 					<Name><![CDATA[predictQuality]]></Name>
-					<Description><![CDATA[Member Dongjin Yang]]></Description>
+					<Description><![CDATA[Member Dongjin Yang
+The function acts as a self‑preserving quality gate. It leans heavily on the principle of “fail open” (pass the item when in doubt) to keep the production line running under all circumstances, while using the ONNX model’s prediction to determine pass/fail when everything works correctly.]]></Description>
 					<X>-1060</X><Y>1630</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
@@ -2598,27 +2602,31 @@ return predictedTime;]]></Body>
 						<Name><![CDATA[trimmingTime]]></Name>
 						<Type><![CDATA[double]]></Type>
 					</Parameter>
-					<Body><![CDATA[// 🎯 1. 安全守护：如果大环境或者质检模型会话为空，直接安全返回 true（合格），确保产线绝对不停机
+					<Body><![CDATA[// 🎯 1. Safety guard: if the AI environment or the QC model session is null,
+//    directly return true (qualified) to ensure the production line never stops
 if (aiEnv == null || sessionQC == null) {
     return true; 
 }
 
 try {
-    // 2. 准备二维数据（将旧的 trimmingTime 变量精准对齐修正为你们 Main 里真实的 procetime）
+    // 2. Prepare 2D input data (align the old trimmingTime variable precisely
+    //    to the real procetime used in your Main)
     float[][] inputData = new float[1][2];
     inputData[0][0] = (float) evaType;
     inputData[0][1] = (float) procetime; 
 
-    // 3. 运行模型推理（精准使用当前主画布定义的 aiEnv 环境变量名）
+    // 3. Run model inference (accurately use the aiEnv environment variable name
+    //    defined in the current main canvas)
     ai.onnxruntime.OnnxTensor tensor = ai.onnxruntime.OnnxTensor.createTensor(aiEnv, inputData); 
     ai.onnxruntime.OrtSession.Result result = sessionQC.run(java.util.Collections.singletonMap("input", tensor));
 
-    // 4. 提取结果
+    // 4. Extract the result
     long[] labels = (long[]) result.get(0).getValue();
     return labels[0] == 1; 
 
 } catch (Throwable e) { 
-    return true; // 发生任何异常，安全放行，不刷屏
+    // Any exception -> safely pass the item, avoid flooding the logs
+    return true; 
 }]]></Body>
 				</Function>
 				<Function AccessType="default" StaticFunction="false">
@@ -3440,7 +3448,8 @@ try {
 				<EmbeddedObject>
 					<Id>1516972345889</Id>
 					<Name><![CDATA[seizeLayupRobot]]></Name>
-					<Description><![CDATA[// Log message when the layup robot is successfully grabbed]]></Description>
+					<Description><![CDATA[Member Yang Dongjin
+ Log message when the layup robot is successfully grabbed]]></Description>
 					<X>630</X><Y>1080</Y>
 					<Label><X>-25</X><Y>-10</Y></Label>
 					<PublicFlag>false</PublicFlag>
@@ -6438,6 +6447,8 @@ if ( layup.getAgent( 0 ).nLayup == ( nCellsInColumn - 1 ) )
 				<EmbeddedObject>
 					<Id>1517930639025</Id>
 					<Name><![CDATA[chooseBatch]]></Name>
+					<Description><![CDATA[Member Yang Dongjin
+check it]]></Description>
 					<X>480</X><Y>1290</Y>
 					<Label><X>-20</X><Y>-20</Y></Label>
 					<PublicFlag>false</PublicFlag>
@@ -7644,7 +7655,8 @@ if ( layup.getAgent( 0 ).nLayup == ( nCellsInColumn - 1 ) )
 				<EmbeddedObject>
 					<Id>1519811826929</Id>
 					<Name><![CDATA[releaseBuffer]]></Name>
-					<Description><![CDATA[// Check if the bottleneck is easing and log the progress]]></Description>
+					<Description><![CDATA[Member Yang Dongjin
+ Check if the bottleneck is easing and log the progress]]></Description>
 					<X>730</X><Y>1080</Y>
 					<Label><X>-15</X><Y>-10</Y></Label>
 					<PublicFlag>false</PublicFlag>
@@ -9471,7 +9483,8 @@ double prob = predictCongestion();]]></Code>
 				<EmbeddedObject>
 					<Id>1574239792619</Id>
 					<Name><![CDATA[flipString]]></Name>
-					<Description><![CDATA[// Call the AI inference function to determine dynamic delay time]]></Description>
+					<Description><![CDATA[Member Yang Dongjin
+ Call the AI inference function to determine dynamic delay time]]></Description>
 					<X>530</X><Y>1080</Y>
 					<Label><X>-5</X><Y>-10</Y></Label>
 					<PublicFlag>false</PublicFlag>
