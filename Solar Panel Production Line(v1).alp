@@ -29694,8 +29694,8 @@ return 23 - releasePanelTransition.getRest() * releasingSpeed;]]></Body>
 					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
 					<EmbeddedIcon>false</EmbeddedIcon>
 					<Z>0</Z>
-					<Width>1350</Width>
-					<Height>750</Height>
+					<Width>1694</Width>
+					<Height>939</Height>
 					<Rotation>0.0</Rotation>
 					<ImageFiles>
 						<ImageResourceReference>
@@ -29865,7 +29865,7 @@ laminator) are built using state charts.]]></Text>
 							<ClassName><![CDATA[AnyLogic model logo dark.png]]></ClassName>
 						</ImageResourceReference>
 					</ImageFiles>
-					<OriginalSize>false</OriginalSize>
+					<OriginalSize>true</OriginalSize>
 				</Image>
 			</Presentation>
 
@@ -29963,38 +29963,38 @@ laminator) are built using state charts.]]></Text>
 	</Experiments>
 	<ModelResources>
 		<Resource>
-			<Id>1780378291193</Id>
+			<Id>1780406013294</Id>
 			<Path><![CDATA[3d/forklift.dae]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 		<Resource>
-			<Id>1780378291194</Id>
+			<Id>1780406013295</Id>
 			<Path><![CDATA[3d/monitor_on.dae]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 		<Resource>
-			<Id>1780378291195</Id>
+			<Id>1780406013296</Id>
 			<Path><![CDATA[3d/person.dae]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 		<Resource>
-			<Id>1780378291196</Id>
+			<Id>1780406013332</Id>
+			<Path><![CDATA[onnxruntime-1.15.1.jar]]></Path>
+			<ReferencedFromUserCode>false</ReferencedFromUserCode>
+			<Location>FILE_SYSTEM</Location>
+		</Resource>
+		<Resource>
+			<Id>1780406031325</Id>
 			<Path><![CDATA[AnyLogic model logo dark.png]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 		<Resource>
-			<Id>1780378291208</Id>
+			<Id>1780406038750</Id>
 			<Path><![CDATA[image.png]]></Path>
-			<ReferencedFromUserCode>false</ReferencedFromUserCode>
-			<Location>FILE_SYSTEM</Location>
-		</Resource>
-		<Resource>
-			<Id>1780378291242</Id>
-			<Path><![CDATA[onnxruntime-1.15.1.jar]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
