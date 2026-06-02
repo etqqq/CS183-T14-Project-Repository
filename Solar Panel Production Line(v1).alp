@@ -7,11 +7,7 @@
 <AnyLogicWorkspace WorkspaceVersion="1.9" AnyLogicVersion="8.9.8.202602271015" AlpVersion="8.9.7">
 <Model>
 	<Id>1516353518244</Id>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-	<Name><![CDATA[Solar Panel Production Line]]></Name>
-========
 	<Name><![CDATA[Solar Panel Production Line(v1)]]></Name>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 	<Description><![CDATA[In this model solar cells are assembled by the stringer machine and placed on a specially prepared glass by the layup system. Next, the glass module with solar cells is conveyed through a sequence of processing, assembly, and quality assurance stations, transforming it into solar panel. Finished solar panels are gathered into batches and taken away by forklift. The model focuses on the different uses of the Station markup elements that can be included in a conveyor network built with the Material Handling Library. Simple automatic processing is simulated by delays for defined periods of time. Manual operations are represented by stations with the bound resources. The complicated behavior of the inline machines (e.g. framing station, laminator) are built using state charts.]]></Description>
 	<EngineVersion>6</EngineVersion>
 	<JavaPackageName><![CDATA[solar_panel_production_line]]></JavaPackageName>
@@ -26,45 +22,19 @@
 			<StartupCode><![CDATA[navigate( view3D );
 sourcePanels.inject( 1 );
 
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-try {  //member Boyu Huang
-========
 try {
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
     ortEnv = ai.onnxruntime.OrtEnvironment.getEnvironment();
     
     ai.onnxruntime.OrtSession.SessionOptions opts = new ai.onnxruntime.OrtSession.SessionOptions();
     opts.setOptimizationLevel(ai.onnxruntime.OrtSession.SessionOptions.OptLevel.BASIC_OPT);
     
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-    String modelPath = new java.io.File("predict_time_dnn.onnx").getAbsolutePath();
-    String oldModelPath = new java.io.File("predict_time.onnx").getAbsolutePath();//（v1 main)
-    ortSession = ortEnv.createSession(modelPath, opts);
-    ortOldSession = ortEnv.createSession(oldModelPath, opts);
-========
     String modelPath = new java.io.File("predict_time.onnx").getAbsolutePath();
     ortSession = ortEnv.createSession(modelPath, opts);
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
     
     traceln("ONNX model loaded successfully!");
 } catch (ai.onnxruntime.OrtException e) {
     traceln("ONNX loading failed:" + e.getMessage());
-}
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-try {
-    sessionQC = env.createSession("predict_qc.onnx", new ai.onnxruntime.OrtSession.SessionOptions());
-} catch (Exception e) {
-    traceln("质检模型加载失败: " + e.getMessage());
-}
-/*testLogOutput.println("simTime,realQueueLength,evaType,dnnPredictedTime");
-test_VS_Output.println("simTime,realQueueLength,evaType,dnnPredictedTime,linearPredictedTime");*/]]></StartupCode>
-			<DestroyCode><![CDATA[/*testLogOutput.close();
-test_VS_Output.close();*/]]></DestroyCode>
-========
-
-// Writing column headers into the csv table.
-csvOutput.println("queueLength,evaType,actualTime");]]></StartupCode>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
+}]]></StartupCode>
 			<Generic>false</Generic>
 			<GenericParameter>
 				<Id>1516353518301</Id>
@@ -315,66 +285,6 @@ csvOutput.println("queueLength,evaType,actualTime");]]></StartupCode>
 						</InitialValue>
 					</Properties>
 				</Variable>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-				<Variable Class="PlainVariable">
-					<Id>1778463851733</Id>
-					<Name><![CDATA[realTrimmingQueueLength]]></Name>
-					<X>-750</X><Y>1790</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
-						<Type><![CDATA[int]]></Type>        
-						<InitialValue Class="CodeValue">
-							<Code><![CDATA[0]]></Code>
-						</InitialValue>
-					</Properties>
-				</Variable>
-				<Variable Class="PlainVariable">
-					<Id>1778684116577</Id>
-					<Name><![CDATA[sessionQC]]></Name>
-					<X>-750</X><Y>1820</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
-						<Type><![CDATA[ai.onnxruntime.OrtSession]]></Type>        
-					</Properties>
-				</Variable>
-				<Variable Class="PlainVariable">
-					<Id>1778687246191</Id>
-					<Name><![CDATA[env]]></Name>
-					<X>-750</X><Y>1850</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
-						<Type><![CDATA[ai.onnxruntime.OrtEnvironment]]></Type>        
-						<InitialValue Class="CodeValue">
-							<Code><![CDATA[ai.onnxruntime.OrtEnvironment.getEnvironment()]]></Code>
-						</InitialValue>
-					</Properties>
-				</Variable>
-				<Variable Class="PlainVariable">
-					<Id>1778687744115</Id>
-					<Name><![CDATA[currentAITime]]></Name>
-					<X>-750</X><Y>1880</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
-						<Type><![CDATA[double]]></Type>        
-						<InitialValue Class="CodeValue">
-							<Code><![CDATA[0]]></Code>
-						</InitialValue>
-					</Properties>
-				</Variable>
-========
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 				<Variable Class="Parameter">
 					<Id>1516869486601</Id>
 					<Name><![CDATA[glassCleaningTime]]></Name>
@@ -953,11 +863,7 @@ csvOutput.println("queueLength,evaType,actualTime");]]></StartupCode>
 				<Variable Class="Parameter">
 					<Id>1777371413660</Id>
 					<Name><![CDATA[onnxValue]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>-730</X><Y>910</Y>
-========
 					<X>-730</X><Y>680</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -978,11 +884,7 @@ csvOutput.println("queueLength,evaType,actualTime");]]></StartupCode>
 				<Variable Class="Parameter">
 					<Id>1777372509132</Id>
 					<Name><![CDATA[ortSession]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>-730</X><Y>940</Y>
-========
 					<X>-730</X><Y>710</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -1003,11 +905,7 @@ csvOutput.println("queueLength,evaType,actualTime");]]></StartupCode>
 				<Variable Class="Parameter">
 					<Id>1777387248458</Id>
 					<Name><![CDATA[ortEnv]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>-730</X><Y>970</Y>
-========
 					<X>-730</X><Y>740</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -1026,30 +924,6 @@ csvOutput.println("queueLength,evaType,actualTime");]]></StartupCode>
 						</ParameterEditor>
 					</Properties>                 
 				</Variable>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-				<Variable Class="Parameter">
-					<Id>1778469067271</Id>
-					<Name><![CDATA[ortOldSession]]></Name>
-					<X>-600</X><Y>970</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Properties SaveInSnapshot="true" ModificatorType="STATIC">
-						<Type><![CDATA[ai.onnxruntime.OrtSession]]></Type>
-						<UnitType><![CDATA[NONE]]></UnitType>
-						<SdArray>false</SdArray>
-						<ParameterEditor>
-							<Id>1778469067269</Id>
-							<EditorContolType>TEXT_BOX</EditorContolType>
-							<MinSliderValue><![CDATA[0]]></MinSliderValue>
-							<MaxSliderValue><![CDATA[100]]></MaxSliderValue>
-							<DelimeterType>NO_DELIMETER</DelimeterType>
-						</ParameterEditor>
-					</Properties>                 
-				</Variable>
-========
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 				<Variable Class="CollectionVariable">
 					<Id>1517930470844</Id>
 					<Name><![CDATA[panelStacks]]></Name>
@@ -2224,15 +2098,6 @@ try {
     java.util.Map<String, ai.onnxruntime.OnnxTensor> inputs = new java.util.HashMap<>();
     inputs.put("input", inputTensor); 
     
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-    ai.onnxruntime.OrtSession.Result oldResult = ortOldSession.run(inputs);
-    
-    float[][] outputData = (float[][]) oldResult.get(0).getValue();
-    predictedTime = (double) outputData[0][0];
-    
-    inputTensor.close();
-    oldResult.close();
-========
     ai.onnxruntime.OrtSession.Result result = ortSession.run(inputs);
     
     float[][] outputData = (float[][]) result.get(0).getValue();
@@ -2240,7 +2105,6 @@ try {
     
     inputTensor.close();
     result.close();
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
     
 } catch (Exception e) {
     traceln("Error during model inference: " + e.getMessage());
@@ -2248,107 +2112,6 @@ try {
 
 return Math.max(predictedTime, 0.1);]]></Body>
 				</Function>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-				<Function AccessType="default" StaticFunction="false">
-					<ReturnModificator>RETURNS_VALUE</ReturnModificator>
-					<ReturnType><![CDATA[double]]></ReturnType>
-					<Id>1778465687326</Id>
-					<Name><![CDATA[advancedPredictTrimmingTime]]></Name>
-					<X>-750</X><Y>1940</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Parameter>
-						<Name><![CDATA[queueLength]]></Name>
-						<Type><![CDATA[int]]></Type>
-					</Parameter>
-					<Parameter>
-						<Name><![CDATA[evaType]]></Name>
-						<Type><![CDATA[int]]></Type>
-					</Parameter>
-					<Body><![CDATA[//Set a safe default processing time to ensure basic output
-double predictedTime = 60.0; 
-
-try {
-    // Cast inputs to float and reshape into a 2D array [1 batch, 2 features]
-    // This matches the [None, 2] input shape defined during Python model training
-    float[][] floatInput = new float[][] { { (float)queueLength, (float)evaType } };
-
-    // Create an ONNX tensor from the Java array using the global environment
-    ai.onnxruntime.OnnxTensor tensor = ai.onnxruntime.OnnxTensor.createTensor(ortEnv, floatInput);
-
-    // Map the tensor to the specific input node name defined in the ONNX model ("input")
-    java.util.Map<String, ai.onnxruntime.OnnxTensor> inputs = new java.util.HashMap<>();
-    inputs.put("input", tensor);
-
-    // Execute inference session
-    ai.onnxruntime.OrtSession.Result result = ortSession.run(inputs);
-
-    // Extract the predicted value from the output tensor and cast to double
-    float[][] output = (float[][]) result.get(0).getValue();
-    predictedTime = (double) output[0][0];
-
-    // CRITICAL: Close native resources to prevent memory leaks during simulation
-    tensor.close();
-    result.close();
-
-} catch (Exception e) {
-    // Fallback mechanism: If AI inference fails, log the error and use the physical heuristic formula
-    traceln("AI inference failed. Triggering fallback logic: " + e.getMessage());
-    double fallbackTime = 60.0 - queueLength * 1.5 - evaType * 18.0;
-    
-    // Clamp the time to the absolute physical minimum of 5.0 seconds
-    predictedTime = Math.max(5.0, fallbackTime); 
-}
-
-// Return the computed time to the Delay block
-return predictedTime;]]></Body>
-				</Function>
-				<Function AccessType="default" StaticFunction="false">
-					<ReturnModificator>RETURNS_VALUE</ReturnModificator>
-					<ReturnType><![CDATA[boolean]]></ReturnType>
-					<Id>1778684254517</Id>
-					<Name><![CDATA[predictQuality]]></Name>
-					<X>-750</X><Y>1970</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<Parameter>
-						<Name><![CDATA[evaType]]></Name>
-						<Type><![CDATA[double]]></Type>
-					</Parameter>
-					<Parameter>
-						<Name><![CDATA[trimmingTime]]></Name>
-						<Type><![CDATA[double]]></Type>
-					</Parameter>
-					<Body><![CDATA[try {
-    // 1. 准备二维数据
-    float[][] inputData = new float[1][2];
-    inputData[0][0] = (float) evaType;
-    inputData[0][1] = (float) trimmingTime;
-
-    // 2. 运行 AI 大脑
-    ai.onnxruntime.OnnxTensor tensor = ai.onnxruntime.OnnxTensor.createTensor(env, inputData); 
-    ai.onnxruntime.OrtSession.Result result = sessionQC.run(java.util.Collections.singletonMap("input", tensor));
-
-    // 3. 提取结果
-    long[] labels = (long[]) result.get(0).getValue();
-    
-    // 【关键新增！】如果 AI 成功了，让它在控制台大喊一声！
-    traceln("🔥 AI 质检完毕！材料:" + evaType + " 耗时:" + trimmingTime + " 结果:" + (labels[0] == 1 ? "【合格】" : "【报废】"));
-
-    return labels[0] == 1; 
-
-} catch (Throwable e) { 
-    // 如果报错，拦截并打印
-    traceln("❌ 拦截到致命错误: " + e.toString());
-    return true; 
-}]]></Body>
-				</Function>
-========
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 			</Functions>
 			<AnalysisData>
     			<DataSet>
@@ -2445,61 +2208,6 @@ return predictedTime;]]></Body>
 					<Title><![CDATA[]]></Title>
 				</HistogramData>
 			</AnalysisData>
-			<Connectivity>
-				<TextFile>
-					<Id>1778418836052</Id>
-					<Name><![CDATA[csvOutput]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>-750</X><Y>1650</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<FileType>FILE</FileType>
-					<Url><![CDATA[]]></Url>
-					<FileMode>WRITE</FileMode>
-					<CharsetName>null</CharsetName>
-					<Separators></Separators>
-				</TextFile>
-				<TextFile>
-					<Id>1778467719655</Id>
-					<Name><![CDATA[testLogOutput]]></Name>
-					<X>-750</X><Y>1680</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<FileType>FILE</FileType>
-					<Url><![CDATA[]]></Url>
-					<FileMode>WRITE</FileMode>
-					<CharsetName>null</CharsetName>
-					<Separators></Separators>
-				</TextFile>
-				<TextFile>
-					<Id>1778468257675</Id>
-					<Name><![CDATA[test_VS_Output]]></Name>
-					<X>-750</X><Y>1710</Y>
-========
-					<X>-730</X><Y>610</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<FileType>FILE</FileType>
-					<Url><![CDATA[]]></Url>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-========
-					<ResourceReference>
-						<PackageName><![CDATA[solar_panel_production_line]]></PackageName>
-						<ClassName><![CDATA[D:/Decompression/Anylogic/factory_data.csv]]></ClassName>
-					</ResourceReference>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
-					<FileMode>WRITE</FileMode>
-					<CharsetName>null</CharsetName>
-					<Separators></Separators>
-				</TextFile>
-			</Connectivity>
 			<AgentLinks>
 				<AgentLink>
 					<Id>1516353518293</Id>
@@ -5973,11 +5681,7 @@ if ( layup.getAgent( 0 ).nLayup == ( nCellsInColumn - 1 ) )
 						<Parameter>
 							<Name><![CDATA[condition]]></Name>
 							<Value Class="CodeValue">
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-								<Code><![CDATA[predictQuality( evaType, currentAITime )]]></Code>
-========
 								<Code><![CDATA[layup.isProcessing()]]></Code>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 							</Value>
 						</Parameter>
 						<Parameter>
@@ -10768,11 +10472,7 @@ hourOutput++;]]></Code>
 				<Group>
 					<Id>1520952878053</Id>
 					<Name><![CDATA[edgeSealingGroup]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>700</X><Y>690</Y>
-========
 					<X>730</X><Y>690</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -11386,11 +11086,7 @@ hourOutput++;]]></Code>
 				<Group>
 					<Id>1520343378336</Id>
 					<Name><![CDATA[trimmingGroup]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>810</X><Y>700</Y>
-========
 					<X>843</X><Y>700</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -13178,11 +12874,7 @@ agent.upsideDown = true;]]></Code>
 				<ConveyorSimpleStation>
 					<Id>1517230654739</Id>
 					<Name><![CDATA[edgeSealing]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>720</X><Y>710</Y>
-========
 					<X>750</X><Y>600</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -13348,11 +13040,7 @@ agent.upsideDown = true;]]></Code>
 						<QuantityColumn>
 						</QuantityColumn>
 					</EmbeddedObject>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<Offset>320.0</Offset>
-========
 					<Offset>290.0</Offset>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Length Class="UnitValue">
 						<Value Class="Double">3</Value>
 						<Unit Class="LengthUnits"><![CDATA[METER]]></Unit>
@@ -13366,11 +13054,7 @@ agent.upsideDown = true;]]></Code>
 				<ConveyorSimpleStation>
 					<Id>1517417905436</Id>
 					<Name><![CDATA[trimming]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>840</X><Y>700</Y>
-========
 					<X>900</X><Y>610</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -13397,11 +13081,7 @@ agent.upsideDown = true;]]></Code>
 							<Parameter>
 								<Name><![CDATA[processTime]]></Name>
 								<Value Class="CodeUnitValue">
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-									<Code><![CDATA[advancedPredictTrimmingTime(realTrimmingQueueLength, evaType)]]></Code>
-========
 									<Code><![CDATA[predictProcessingTime( 5, evaType )]]></Code>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 									<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
 								</Value>
 							</Parameter>
@@ -13458,28 +13138,6 @@ agent.upsideDown = true;]]></Code>
 							</Parameter>
 							<Parameter>
 								<Name><![CDATA[onProcessStarted]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-								<Value Class="CodeValue">
-									<Code><![CDATA[/*testLogOutput.print( time() + "," );
-testLogOutput.print( realTrimmingQueueLength + "," );
-testLogOutput.print( evaType + "," );
-testLogOutput.println( advancedPredictTrimmingTime(realTrimmingQueueLength, evaType) );
-
-test_VS_Output.print( time() + "," );
-test_VS_Output.print( realTrimmingQueueLength + "," );
-test_VS_Output.print( evaType + "," );
-test_VS_Output.print( advancedPredictTrimmingTime(realTrimmingQueueLength, evaType)+ "," ); 
-test_VS_Output.println( predictProcessingTime(realTrimmingQueueLength, evaType) ); 
-//predictProcessingTime(queueLength, evaType):The function for old linear model calculation.*/
-
-realTrimmingQueueLength--;
-/* member Boyu Huang
-A trimming process begins, queue length reduces by 1*/]]></Code>
-								</Value>
-							</Parameter>
-							<Parameter>
-								<Name><![CDATA[onProcessFinished]]></Name>
-========
 							</Parameter>
 							<Parameter>
 								<Name><![CDATA[onProcessFinished]]></Name>
@@ -13493,11 +13151,6 @@ int dataCount=0;
 //Add equation to generate fake data, uniform(-2.0, 2.0) is realistic noise.
 double actualTime = 60.0 - currentQueueSize * 1.5 - evaType * 18.0 + uniform(-2.0, 2.0); 
 
-// Writing three type of data into CSV file.
-csvOutput.print( currentQueueSize + "," );
-csvOutput.print( evaType + "," );
-csvOutput.println( actualTime );
-
 // Counter and pause logic
 dataCount++;
 if ( dataCount >= 100000 ) {
@@ -13505,7 +13158,6 @@ if ( dataCount >= 100000 ) {
     traceln("Collected one hundred thousand pieces of fake data."); 
 }]]></Code>
 								</Value>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 							</Parameter>
 							<Parameter>
 								<Name><![CDATA[onLeadingEdgeEnter]]></Name>
@@ -13597,11 +13249,7 @@ if ( dataCount >= 100000 ) {
 						<QuantityColumn>
 						</QuantityColumn>
 					</EmbeddedObject>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<Offset>200.0</Offset>
-========
 					<Offset>160.0</Offset>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Length Class="UnitValue">
 						<Value Class="Double">3</Value>
 						<Unit Class="LengthUnits"><![CDATA[METER]]></Unit>
@@ -14320,84 +13968,6 @@ laminator.get( 0 ).receive( "open" );]]></Code>
 					<LineMaterial>null</LineMaterial>
 					<FillMaterial>null</FillMaterial>
 				</ConveyorSimpleStation>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-				<PositionOnConveyor>
-					<Id>1778463985080</Id>
-					<Name><![CDATA[positionOnConveyor1]]></Name>
-					<X>1000</X><Y>340</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
-					<Z>0</Z>
-					<EmbeddedObject>
-						<Id>1778463985084</Id>
-						<ActiveObjectClass>
-							<PackageName><![CDATA[com.anylogic.libraries.material_handling]]></PackageName>
-							<ClassName><![CDATA[PositionOnConveyorDescriptor]]></ClassName>
-						</ActiveObjectClass>
-						<GenericParameterSubstitute>
-							<GenericParameterSubstituteReference>
-								<PackageName><![CDATA[com.anylogic.libraries.material_handling]]></PackageName>
-								<ClassName><![CDATA[PositionOnConveyorDescriptor]]></ClassName>
-								<ItemName><![CDATA[1513935806894]]></ItemName>
-							</GenericParameterSubstituteReference>
-						</GenericParameterSubstitute>
-						<Parameters>
-							<Parameter>
-								<Name><![CDATA[initiallyBlocked]]></Name>
-							</Parameter>
-							<Parameter>
-								<Name><![CDATA[onLeadingEdgeEnter]]></Name>
-								<Value Class="CodeValue">
-									<Code><![CDATA[realTrimmingQueueLength++;
-/* member Boyu Huang
-to record real trimming queue length
-along with positionOnConveyor2
-and positionOnConveyor3 */]]></Code>
-								</Value>
-							</Parameter>
-							<Parameter>
-								<Name><![CDATA[onTrailingEdgeExit]]></Name>
-							</Parameter>
-							<Parameter>
-								<Name><![CDATA[onCellEnter]]></Name>
-							</Parameter>
-							<Parameter>
-								<Name><![CDATA[onCellExit]]></Name>
-							</Parameter>
-						</Parameters>
-						<ReplicationFlag>false</ReplicationFlag>
-						<Replication Class="CodeValue">
-							<Code><![CDATA[100]]></Code>
-						</Replication>
-						<CollectionType>ARRAY_LIST_BASED</CollectionType>
-						<InitialLocationType>XYZ</InitialLocationType>
-						<ColumnCode Class="CodeValue">
-							<Code><![CDATA[0]]></Code>
-						</ColumnCode>
-						<RowCode Class="CodeValue">
-							<Code><![CDATA[0]]></Code>
-						</RowCode>
-						<LocationNameCode Class="CodeValue">
-							<Code><![CDATA[""]]></Code>
-						</LocationNameCode>
-						<InitializationType>SPECIFIED_NUMBER</InitializationType>
-						<InitializationDatabaseTableQuery>
-							<Id>1778463985083</Id>
-							<TableReference>
-							</TableReference>
-						</InitializationDatabaseTableQuery>
-						<InitializationDatabaseType>ONE_AGENT_PER_DATABASE_RECORD</InitializationDatabaseType>
-						<QuantityColumn>
-						</QuantityColumn>
-					</EmbeddedObject>
-					<Offset>90.0</Offset>
-				</PositionOnConveyor>
-				
-========
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 			</Presentation>
 
 				</Conveyor>
@@ -15438,84 +15008,6 @@ laminator.get( 1 ).receive( "open" );]]></Code>
 					<LineMaterial>null</LineMaterial>
 					<FillMaterial>null</FillMaterial>
 				</ConveyorSimpleStation>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-				<PositionOnConveyor>
-					<Id>1778465367984</Id>
-					<Name><![CDATA[positionOnConveyor2]]></Name>
-					<X>1105</X><Y>340</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>false</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
-					<Z>0</Z>
-					<EmbeddedObject>
-						<Id>1778465367988</Id>
-						<ActiveObjectClass>
-							<PackageName><![CDATA[com.anylogic.libraries.material_handling]]></PackageName>
-							<ClassName><![CDATA[PositionOnConveyorDescriptor]]></ClassName>
-						</ActiveObjectClass>
-						<GenericParameterSubstitute>
-							<GenericParameterSubstituteReference>
-								<PackageName><![CDATA[com.anylogic.libraries.material_handling]]></PackageName>
-								<ClassName><![CDATA[PositionOnConveyorDescriptor]]></ClassName>
-								<ItemName><![CDATA[1513935806894]]></ItemName>
-							</GenericParameterSubstituteReference>
-						</GenericParameterSubstitute>
-						<Parameters>
-							<Parameter>
-								<Name><![CDATA[initiallyBlocked]]></Name>
-							</Parameter>
-							<Parameter>
-								<Name><![CDATA[onLeadingEdgeEnter]]></Name>
-								<Value Class="CodeValue">
-									<Code><![CDATA[realTrimmingQueueLength++;
-/* member Boyu Huang
-to record real trimming queue length
-along with positionOnConveyor1
-and positionOnConveyor3 */]]></Code>
-								</Value>
-							</Parameter>
-							<Parameter>
-								<Name><![CDATA[onTrailingEdgeExit]]></Name>
-							</Parameter>
-							<Parameter>
-								<Name><![CDATA[onCellEnter]]></Name>
-							</Parameter>
-							<Parameter>
-								<Name><![CDATA[onCellExit]]></Name>
-							</Parameter>
-						</Parameters>
-						<ReplicationFlag>false</ReplicationFlag>
-						<Replication Class="CodeValue">
-							<Code><![CDATA[100]]></Code>
-						</Replication>
-						<CollectionType>ARRAY_LIST_BASED</CollectionType>
-						<InitialLocationType>XYZ</InitialLocationType>
-						<ColumnCode Class="CodeValue">
-							<Code><![CDATA[0]]></Code>
-						</ColumnCode>
-						<RowCode Class="CodeValue">
-							<Code><![CDATA[0]]></Code>
-						</RowCode>
-						<LocationNameCode Class="CodeValue">
-							<Code><![CDATA[""]]></Code>
-						</LocationNameCode>
-						<InitializationType>SPECIFIED_NUMBER</InitializationType>
-						<InitializationDatabaseTableQuery>
-							<Id>1778465367987</Id>
-							<TableReference>
-							</TableReference>
-						</InitializationDatabaseTableQuery>
-						<InitializationDatabaseType>ONE_AGENT_PER_DATABASE_RECORD</InitializationDatabaseType>
-						<QuantityColumn>
-						</QuantityColumn>
-					</EmbeddedObject>
-					<Offset>90.0</Offset>
-				</PositionOnConveyor>
-				
-========
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 			</Presentation>
 
 				</Conveyor>
@@ -16878,11 +16370,7 @@ if ( waitForGlassDelivery.size() > 0 )
 				<PositionOnConveyor>
 					<Id>1517315343954</Id>
 					<Name><![CDATA[laminationPhotoEye]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>1240</X><Y>420</Y>
-========
 					<X>940</X><Y>200</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>false</PresentationFlag>
@@ -16960,11 +16448,7 @@ if ( waitForGlassDelivery.size() > 0 )
 						<QuantityColumn>
 						</QuantityColumn>
 					</EmbeddedObject>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<Offset>920.0</Offset>
-========
 					<Offset>900.0</Offset>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 				</PositionOnConveyor>
 				
 			</Presentation>
@@ -19660,84 +19144,6 @@ laminator.get( 2 ).receive( "open" );]]></Code>
 					<LineMaterial>null</LineMaterial>
 					<FillMaterial>null</FillMaterial>
 				</ConveyorSimpleStation>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-				<PositionOnConveyor>
-					<Id>1778465405382</Id>
-					<Name><![CDATA[positionOnConveyor3]]></Name>
-					<X>1225</X><Y>340</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
-					<Z>0</Z>
-					<EmbeddedObject>
-						<Id>1778465405386</Id>
-						<ActiveObjectClass>
-							<PackageName><![CDATA[com.anylogic.libraries.material_handling]]></PackageName>
-							<ClassName><![CDATA[PositionOnConveyorDescriptor]]></ClassName>
-						</ActiveObjectClass>
-						<GenericParameterSubstitute>
-							<GenericParameterSubstituteReference>
-								<PackageName><![CDATA[com.anylogic.libraries.material_handling]]></PackageName>
-								<ClassName><![CDATA[PositionOnConveyorDescriptor]]></ClassName>
-								<ItemName><![CDATA[1513935806894]]></ItemName>
-							</GenericParameterSubstituteReference>
-						</GenericParameterSubstitute>
-						<Parameters>
-							<Parameter>
-								<Name><![CDATA[initiallyBlocked]]></Name>
-							</Parameter>
-							<Parameter>
-								<Name><![CDATA[onLeadingEdgeEnter]]></Name>
-								<Value Class="CodeValue">
-									<Code><![CDATA[realTrimmingQueueLength++;
-/* member Boyu Huang
-to record real trimming queue length
-along with positionOnConveyor1
-and positionOnConveyor2 */]]></Code>
-								</Value>
-							</Parameter>
-							<Parameter>
-								<Name><![CDATA[onTrailingEdgeExit]]></Name>
-							</Parameter>
-							<Parameter>
-								<Name><![CDATA[onCellEnter]]></Name>
-							</Parameter>
-							<Parameter>
-								<Name><![CDATA[onCellExit]]></Name>
-							</Parameter>
-						</Parameters>
-						<ReplicationFlag>false</ReplicationFlag>
-						<Replication Class="CodeValue">
-							<Code><![CDATA[100]]></Code>
-						</Replication>
-						<CollectionType>ARRAY_LIST_BASED</CollectionType>
-						<InitialLocationType>XYZ</InitialLocationType>
-						<ColumnCode Class="CodeValue">
-							<Code><![CDATA[0]]></Code>
-						</ColumnCode>
-						<RowCode Class="CodeValue">
-							<Code><![CDATA[0]]></Code>
-						</RowCode>
-						<LocationNameCode Class="CodeValue">
-							<Code><![CDATA[""]]></Code>
-						</LocationNameCode>
-						<InitializationType>SPECIFIED_NUMBER</InitializationType>
-						<InitializationDatabaseTableQuery>
-							<Id>1778465405385</Id>
-							<TableReference>
-							</TableReference>
-						</InitializationDatabaseTableQuery>
-						<InitializationDatabaseType>ONE_AGENT_PER_DATABASE_RECORD</InitializationDatabaseType>
-						<QuantityColumn>
-						</QuantityColumn>
-					</EmbeddedObject>
-					<Offset>90.0</Offset>
-				</PositionOnConveyor>
-				
-========
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 			</Presentation>
 
 				</Conveyor>
@@ -20203,11 +19609,7 @@ and positionOnConveyor2 */]]></Code>
 				<RectangleNode>
 					<Id>1517911694208</Id>
 					<Name><![CDATA[trimWorkzone]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>780</X><Y>660</Y>
-========
 					<X>810</X><Y>660</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>false</PresentationFlag>
@@ -20324,11 +19726,7 @@ and positionOnConveyor2 */]]></Code>
 				<Attractor>
 					<Id>1517911717141</Id>
 					<Name><![CDATA[attractor2]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>800</X><Y>670</Y>
-========
 					<X>830</X><Y>670</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -20682,11 +20080,7 @@ and positionOnConveyor2 */]]></Code>
 				<Group>
 					<Id>1517922440891</Id>
 					<Name><![CDATA[notes]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>660</X><Y>440</Y>
-========
 					<X>660</X><Y>430</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -20800,11 +20194,7 @@ and positionOnConveyor2 */]]></Code>
 				<Text>
 					<Id>1516356396735</Id>
 					<Name><![CDATA[text2]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>170</X><Y>290</Y>
-========
 					<X>220</X><Y>300</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -20825,11 +20215,7 @@ and positionOnConveyor2 */]]></Code>
 				<Polyline>
 					<Id>1516356396737</Id>
 					<Name><![CDATA[polyline2]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>140</X><Y>290</Y>
-========
 					<X>190</X><Y>300</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -21058,11 +20444,7 @@ and positionOnConveyor2 */]]></Code>
 				<Text>
 					<Id>1516790337178</Id>
 					<Name><![CDATA[text7]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>40</X><Y>200</Y>
-========
 					<X>83</X><Y>190</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -21083,11 +20465,7 @@ and positionOnConveyor2 */]]></Code>
 				<Polyline>
 					<Id>1516790337220</Id>
 					<Name><![CDATA[polyline7]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>10</X><Y>240</Y>
-========
 					<X>60</X><Y>240</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -24742,11 +24120,7 @@ and backsheet]]></Text>
 				<Text>
 					<Id>1777372760865</Id>
 					<Name><![CDATA[text26]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>-750</X><Y>860</Y>
-========
 					<X>-750</X><Y>645</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -24756,11 +24130,7 @@ and backsheet]]></Text>
 					<Z>0</Z>
 					<Rotation>0.0</Rotation>
 					<Color>-16777216</Color>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<Text><![CDATA[Onnx basic parameters (V1)]]></Text>
-========
 					<Text><![CDATA[Onnx basic debug parameters (V1)]]></Text>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Font>
 						<Name>SansSerif</Name>
 						<Size>18</Size>
@@ -24781,11 +24151,7 @@ and backsheet]]></Text>
 					<Z>0</Z>
 					<Rotation>0.0</Rotation>
 					<Color>-16777216</Color>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<Text><![CDATA[Onnx basic function (V1)]]></Text>
-========
 					<Text><![CDATA[Onnx basic debug function (V1)]]></Text>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Font>
 						<Name>SansSerif</Name>
 						<Size>18</Size>
@@ -24796,11 +24162,7 @@ and backsheet]]></Text>
 				<Text>
 					<Id>1777424234313</Id>
 					<Name><![CDATA[text28]]></Name>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<X>40</X><Y>740</Y>
-========
 					<X>30</X><Y>750</Y>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -24809,21 +24171,12 @@ and backsheet]]></Text>
 					<EmbeddedIcon>false</EmbeddedIcon>
 					<Z>0</Z>
 					<Rotation>0.0</Rotation>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-					<Color>-65536</Color>
-					<Text><![CDATA[predictProcessingTime( 5, evaType )]]></Text>
-					<TextCode><![CDATA["EVA queue length ahead of trimming:"+realTrimmingQueueLength]]></TextCode>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>20</Size>
-========
 					<Color>-16777216</Color>
 					<Text><![CDATA[predictProcessingTime( 5, evaType )]]></Text>
 					<TextCode><![CDATA[predictProcessingTime( 5, evaType )]]></TextCode>
 					<Font>
 						<Name>SansSerif</Name>
 						<Size>36</Size>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 						<Style>0</Style>
 					</Font>
 					<Alignment>LEFT</Alignment>
@@ -24847,10 +24200,6 @@ and backsheet]]></Text>
 						<Orientation>HORIZONTAL</Orientation>
 						<MinValue><![CDATA[0]]></MinValue>
 						<MaxValue><![CDATA[2]]></MaxValue>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-						<Step><![CDATA[1]]></Step>
-========
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 						<LinkTo>true</LinkTo>
 						<Link>evaType</Link>
 					</ExtendedProperties>
@@ -25097,268 +24446,6 @@ ultra fast cure EVA：2]]></Text>
 					</Font>
 					<Alignment>LEFT</Alignment>
 				</Text>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-				<Text>
-					<Id>1778461990841</Id>
-					<Name><![CDATA[text40]]></Name>
-					<X>-760</X><Y>1610</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-16777216</Color>
-					<Text><![CDATA[The text file]]></Text>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>18</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
-				<Text>
-					<Id>1778463155235</Id>
-					<Name><![CDATA[text41]]></Name>
-					<X>-760</X><Y>1740</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-16777216</Color>
-					<Text><![CDATA[New parameters and variables (refactor/advanced-AI-model-replace)]]></Text>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>20</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
-				<Polyline>
-					<Id>1778464596581</Id>
-					<Name><![CDATA[polyline31]]></Name>
-					<X>1010</X><Y>350</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>1</Z>
-					<ZHeight>1</ZHeight>
-					<LineWidth>1</LineWidth>
-					<LineColor>-16777216</LineColor>
-					<LineMaterial>null</LineMaterial>
-					<LineStyle>SOLID</LineStyle>
-					<BeginArrowSize>1</BeginArrowSize>
-					<BeginArrowStyle>0</BeginArrowStyle>
-					<EndArrowSize>1</EndArrowSize>
-					<EndArrowStyle>0</EndArrowStyle>
-					<FillColor/>
-					<FillMaterial>null</FillMaterial>
-					<Points>
-					   <Point><X>0</X><Y>0</Y><Z>0</Z></Point>
-					   <Point><X>20</X><Y>20</Y><Z>0</Z></Point>
-					   <Point><X>290</X><Y>20</Y><Z>0</Z></Point>
-					</Points>
-					<Closed>false</Closed>
-				</Polyline>
-				<Polyline>
-					<Id>1778464613986</Id>
-					<Name><![CDATA[polyline32]]></Name>
-					<X>1110</X><Y>350</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>1</Z>
-					<ZHeight>1</ZHeight>
-					<LineWidth>1</LineWidth>
-					<LineColor>-16777216</LineColor>
-					<LineMaterial>null</LineMaterial>
-					<LineStyle>SOLID</LineStyle>
-					<BeginArrowSize>1</BeginArrowSize>
-					<BeginArrowStyle>0</BeginArrowStyle>
-					<EndArrowSize>1</EndArrowSize>
-					<EndArrowStyle>0</EndArrowStyle>
-					<FillColor/>
-					<FillMaterial>null</FillMaterial>
-					<Points>
-					   <Point><X>0</X><Y>0</Y><Z>0</Z></Point>
-					   <Point><X>20</X><Y>20</Y><Z>0</Z></Point>
-					   <Point><X>190</X><Y>20</Y><Z>0</Z></Point>
-					</Points>
-					<Closed>false</Closed>
-				</Polyline>
-				<Polyline>
-					<Id>1778464636105</Id>
-					<Name><![CDATA[polyline33]]></Name>
-					<X>1210</X><Y>350</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D3D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>1</Z>
-					<ZHeight>1</ZHeight>
-					<LineWidth>1</LineWidth>
-					<LineColor>-16777216</LineColor>
-					<LineMaterial>null</LineMaterial>
-					<LineStyle>SOLID</LineStyle>
-					<BeginArrowSize>1</BeginArrowSize>
-					<BeginArrowStyle>0</BeginArrowStyle>
-					<EndArrowSize>1</EndArrowSize>
-					<EndArrowStyle>0</EndArrowStyle>
-					<FillColor/>
-					<FillMaterial>null</FillMaterial>
-					<Points>
-					   <Point><X>0</X><Y>0</Y><Z>0</Z></Point>
-					   <Point><X>20</X><Y>20</Y><Z>0</Z></Point>
-					   <Point><X>90</X><Y>20</Y><Z>0</Z></Point>
-					</Points>
-					<Closed>false</Closed>
-				</Polyline>
-				<Text>
-					<Id>1778465661539</Id>
-					<Name><![CDATA[text42]]></Name>
-					<X>-760</X><Y>1900</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-16777216</Color>
-					<Text><![CDATA[New function (refactor/advanced-AI-model-replace)]]></Text>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>20</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
-				<Text>
-					<Id>1778466446086</Id>
-					<Name><![CDATA[text43]]></Name>
-					<X>40</X><Y>770</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-65536</Color>
-					<Text><![CDATA[predictProcessingTime( 5, evaType )]]></Text>
-					<TextCode><![CDATA["Trimming Time:"+advancedPredictTrimmingTime(realTrimmingQueueLength, evaType)]]></TextCode>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>20</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
-				<Text>
-					<Id>1778466580226</Id>
-					<Name><![CDATA[text44]]></Name>
-					<X>1260</X><Y>310</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-16776961</Color>
-					<Text><![CDATA[Counter for 
-counting the
-current queue
-length]]></Text>
-					<Font>
-						<Name>Arial Rounded MT Bold</Name>
-						<Size>12</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
-				<Text>
-					<Id>1778502356779</Id>
-					<Name><![CDATA[text45]]></Name>
-					<X>-620</X><Y>1640</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-16777216</Color>
-					<Text><![CDATA[To generate sim data to train new model.]]></Text>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>16</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
-				<Text>
-					<Id>1778502452232</Id>
-					<Name><![CDATA[text46]]></Name>
-					<X>-590</X><Y>1670</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-16777216</Color>
-					<Text><![CDATA[To record test data of new model]]></Text>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>16</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
-				<Text>
-					<Id>1778502500299</Id>
-					<Name><![CDATA[text47]]></Name>
-					<X>-750</X><Y>1720</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-16777216</Color>
-					<Text><![CDATA[To record test data of the old model for comparison]]></Text>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>16</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
-========
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 			</Presentation>
 
 				</Level>
@@ -30855,12 +29942,6 @@ laminator) are built using state charts.]]></Text>
 				<Parameter>
 					<ParameterName><![CDATA[ortEnv]]></ParameterName>
 				</Parameter>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-				<Parameter>
-					<ParameterName><![CDATA[ortOldSession]]></ParameterName>
-				</Parameter>
-========
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
 			</Parameters>
 			<PresentationProperties>
 				<EnableZoomAndPanning>false</EnableZoomAndPanning>
@@ -30880,47 +29961,44 @@ laminator) are built using state charts.]]></Text>
 			<BypassInitialScreen>false</BypassInitialScreen>
 		</SimulationExperiment>	
 	</Experiments>
-<<<<<<<< HEAD:Solar Panel Production Line.alp
-========
 	<ModelResources>
 		<Resource>
-			<Id>1780367754120</Id>
+			<Id>1780378291193</Id>
 			<Path><![CDATA[3d/forklift.dae]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 		<Resource>
-			<Id>1780367754121</Id>
+			<Id>1780378291194</Id>
 			<Path><![CDATA[3d/monitor_on.dae]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 		<Resource>
-			<Id>1780367754122</Id>
+			<Id>1780378291195</Id>
 			<Path><![CDATA[3d/person.dae]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 		<Resource>
-			<Id>1780367754123</Id>
+			<Id>1780378291196</Id>
 			<Path><![CDATA[AnyLogic model logo dark.png]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 		<Resource>
-			<Id>1780367754135</Id>
+			<Id>1780378291208</Id>
 			<Path><![CDATA[image.png]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 		<Resource>
-			<Id>1780367754158</Id>
+			<Id>1780378291242</Id>
 			<Path><![CDATA[onnxruntime-1.15.1.jar]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 	</ModelResources>
->>>>>>>> teammate-pr:Solar Panel Production Line(v1).alp
     <RequiredLibraryReference>
 		<LibraryName><![CDATA[com.anylogic.libraries.material_handling]]></LibraryName>
 		<VersionMajor>8</VersionMajor>
