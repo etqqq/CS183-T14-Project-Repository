@@ -19,33 +19,120 @@
 		<ActiveObjectClass>
 			<Id>1516353518302</Id>
 			<Name><![CDATA[Main]]></Name>
-			<StartupCode><![CDATA[navigate( view3D );
-sourcePanels.inject( 1 );
+			<Import><![CDATA[import ai.onnxruntime.OrtEnvironment;
+import ai.onnxruntime.OrtSession;
+import ai.onnxruntime.OnnxTensor;
+import java.util.Collections;
+import java.util.Map;
+import java.nio.file.Paths;]]></Import>
+			<StartupCode><![CDATA[// 1. Basic view and injection initialization
+navigate(view3D);
+sourcePanels.inject(1);
 
-try {  //member Boyu Huang
-    ortEnv = ai.onnxruntime.OrtEnvironment.getEnvironment();
-    
+try {
+    // 2. [Core Architecture] Get ONNX global environment (Singleton pattern at the underlying level)
+    // This ensures perfect compatibility with the various environment variable names created by team members without causing conflicts!
+    ai.onnxruntime.OrtEnvironment globalEnv = ai.onnxruntime.OrtEnvironment.getEnvironment();
+    ortEnv = globalEnv; // Trimming model environment
+    aiEnv = globalEnv;  // DQN scheduling model environment
+    env = globalEnv;    // QC quality inspection model environment
+
+    // Unified configuration parameters (Enable basic optimization to accelerate simulation)
     ai.onnxruntime.OrtSession.SessionOptions opts = new ai.onnxruntime.OrtSession.SessionOptions();
     opts.setOptimizationLevel(ai.onnxruntime.OrtSession.SessionOptions.OptLevel.BASIC_OPT);
+
+    // ==========================================
+    // 3. Trimming time prediction model (V1 & V2)
+    // ==========================================
+    String pathDnn = new java.io.File("predict_time_dnn.onnx").getAbsolutePath();
+    String pathLinear = new java.io.File("predict_time.onnx").getAbsolutePath();
     
-    String modelPath = new java.io.File("predict_time_dnn.onnx").getAbsolutePath();
-    String oldModelPath = new java.io.File("predict_time.onnx").getAbsolutePath();//（v1 main)
-    ortSession = ortEnv.createSession(modelPath, opts);
-    ortOldSession = ortEnv.createSession(oldModelPath, opts);
-    
-    traceln("ONNX model loaded successfully!");
-} catch (ai.onnxruntime.OrtException e) {
-    traceln("ONNX loading failed:" + e.getMessage());
-}
-try {
-    sessionQC = env.createSession("predict_qc.onnx", new ai.onnxruntime.OrtSession.SessionOptions());
+    if (new java.io.File(pathDnn).exists() && new java.io.File(pathLinear).exists()) {
+        ortSession = ortEnv.createSession(pathDnn, opts);       // V2 DNN model -> bind to ortSession
+        ortOldSession = ortEnv.createSession(pathLinear, opts); // V1 Linear model -> bind to ortOldSession
+        traceln("--> V1(predict_time) & V2(predict_time_dnn) are loaded successfully!");
+    } else {
+        traceln("⚠️ Warning: Trimming models predict_time_dnn.onnx or predict_time.onnx not found!");
+    }
+
+    // ==========================================
+    // 4. Intelligent routing model
+    // ==========================================
+    String pathRobot = new java.io.File("robot_policy.onnx").getAbsolutePath();
+    if (new java.io.File(pathRobot).exists()) {
+        sessionRobotPolicy = aiEnv.createSession(pathRobot, opts); // Bind to sessionRobotPolicy
+        traceln("--> DQN Routing Model] robot_policy.onnx loaded successfully!");
+    } else {
+        traceln("⚠️ Warning: robot_policy.onnx model not found!");
+    }
+
+    // ==========================================
+    // 5. QC prediction model
+    // ==========================================
+    String pathQC = new java.io.File("predict_qc.onnx").getAbsolutePath();
+    if (new java.io.File(pathQC).exists()) {
+        sessionQC = env.createSession(pathQC, opts); // Bind to sessionQC
+        traceln("--> [QC Prediction Model] predict_qc.onnx loaded successfully!");
+    } else {
+        traceln("⚠️ Warning: predict_qc.onnx model not found!");
+    }
+
 } catch (Exception e) {
-    traceln("质检模型加载失败: " + e.getMessage());
+    traceln("🔴 Fatal error occurred while loading AI models! Detailed error: " + e.getMessage());
+}]]></StartupCode>
+			<DestroyCode><![CDATA[traceln("The system is shutting down，Start destroying and releasing all AI sessions and environmental resources safely...");
+
+// 1. Destroy member Jingxuan Huang's intelligent routing model session
+try {
+    if (sessionRobotPolicy != null) {
+        sessionRobotPolicy.close();
+        traceln("--> 💾 [DQN model] sessionRobotPolicy has been closed and released safely.");
+    }
+} catch (Exception e) {
+    traceln("⚠️ Exception occurred while closing sessionRobotPolicy: " + e.getMessage());
 }
-/*testLogOutput.println("simTime,realQueueLength,evaType,dnnPredictedTime");
-test_VS_Output.println("simTime,realQueueLength,evaType,dnnPredictedTime,linearPredictedTime");*/]]></StartupCode>
-			<DestroyCode><![CDATA[/*testLogOutput.close();
-test_VS_Output.close();*/]]></DestroyCode>
+
+// 2. Destroy member Dongjin Yang's QC (Quality Control) prediction model session
+try {
+    if (sessionQC != null) {
+        sessionQC.close();
+        traceln("--> 💾 [QC Prediction Model] sessionQC has been closed and released safely.");
+    }
+} catch (Exception e) {
+    traceln("⚠️ Exception occurred while closing sessionQC: " + e.getMessage());
+}
+
+// 3. Destroy member Boyu Huang's DNN and V1 prediction model session
+try {
+    if (ortSession != null) {
+        ortSession.close();
+        traceln("--> 💾 [DNN model] ortSession has been closed and released safely.");
+    }
+} catch (Exception e) {
+    traceln("⚠️ Exception occurred while closing ortSession: " + e.getMessage());
+}
+
+try {
+    if (ortOldSession != null) {
+        ortOldSession.close();
+        traceln("--> 💾 [V1 model] ortOldSession has been closed and released safely.");
+    }
+} catch (Exception e) {
+    traceln("⚠️ Exception occurred while closing ortOldSession: " + e.getMessage());
+}
+
+// The code that destroy member Zhichen Gan's AI model is in his function "lstm_buffer"
+// 4. Ultimate destruction: Close the globally unique AI runtime environment (must be closed last)
+try {
+    if (aiEnv != null) {
+        aiEnv.close();
+        traceln("--> [Global AI Runtime Environment] aiEnv runtime virtualized memory has been thoroughly cleaned and safely returned to the system!");
+    }
+} catch (Exception e) {
+    traceln("⚠️ Exception occurred while closing ortOldSession: aiEnv: " + e.getMessage());
+}
+
+traceln("All DQN AI resources have been safely unloaded. The project lifecycle is perfectly closed-loop!");]]></DestroyCode>
 			<Generic>false</Generic>
 			<GenericParameter>
 				<Id>1516353518301</Id>
@@ -299,7 +386,7 @@ test_VS_Output.close();*/]]></DestroyCode>
 				<Variable Class="PlainVariable">
 					<Id>1778463851733</Id>
 					<Name><![CDATA[realTrimmingQueueLength]]></Name>
-					<X>-750</X><Y>1790</Y>
+					<X>-1060</X><Y>1510</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -314,7 +401,7 @@ test_VS_Output.close();*/]]></DestroyCode>
 				<Variable Class="PlainVariable">
 					<Id>1778684116577</Id>
 					<Name><![CDATA[sessionQC]]></Name>
-					<X>-750</X><Y>1820</Y>
+					<X>-1060</X><Y>1660</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -326,7 +413,7 @@ test_VS_Output.close();*/]]></DestroyCode>
 				<Variable Class="PlainVariable">
 					<Id>1778687246191</Id>
 					<Name><![CDATA[env]]></Name>
-					<X>-750</X><Y>1850</Y>
+					<X>-1060</X><Y>1540</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -341,7 +428,7 @@ test_VS_Output.close();*/]]></DestroyCode>
 				<Variable Class="PlainVariable">
 					<Id>1778687744115</Id>
 					<Name><![CDATA[currentAITime]]></Name>
-					<X>-750</X><Y>1880</Y>
+					<X>-1060</X><Y>1570</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -356,7 +443,7 @@ test_VS_Output.close();*/]]></DestroyCode>
 				<Variable Class="PlainVariable">
 					<Id>1780109885512</Id>
 					<Name><![CDATA[procetime]]></Name>
-					<X>-1140</X><Y>1090</Y>
+					<X>-1060</X><Y>1040</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -369,9 +456,48 @@ test_VS_Output.close();*/]]></DestroyCode>
 					</Properties>
 				</Variable>
 				<Variable Class="PlainVariable">
-					<Id>1780241771936</Id>
-					<Name><![CDATA[currentBufferCapacity]]></Name>
-					<X>-480</X><Y>1790</Y>
+					<Id>1780223622956</Id>
+					<Name><![CDATA[sessionRobotPolicy]]></Name>
+					<X>-1060</X><Y>1270</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[OrtSession]]></Type>        
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1780223836526</Id>
+					<Name><![CDATA[aiEnv]]></Name>
+					<X>-1060</X><Y>1240</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[OrtEnvironment]]></Type>        
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1780227321538</Id>
+					<Name><![CDATA[estimatedTime]]></Name>
+					<X>-1060</X><Y>1300</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[double]]></Type>        
+						<InitialValue Class="CodeValue">
+							<Code><![CDATA[0.0]]></Code>
+						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1780227323727</Id>
+					<Name><![CDATA[lastQCCheck]]></Name>
+					<X>-1060</X><Y>1320</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -379,8 +505,44 @@ test_VS_Output.close();*/]]></DestroyCode>
 					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
 						<Type><![CDATA[int]]></Type>        
 						<InitialValue Class="CodeValue">
-							<Code><![CDATA[20]]></Code>
+							<Code><![CDATA[0]]></Code>
 						</InitialValue>
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1780286054887</Id>
+					<Name><![CDATA[count0]]></Name>
+					<X>-1060</X><Y>1350</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[int]]></Type>        
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1780286057023</Id>
+					<Name><![CDATA[count1]]></Name>
+					<X>-1060</X><Y>1380</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[int]]></Type>        
+					</Properties>
+				</Variable>
+				<Variable Class="PlainVariable">
+					<Id>1780286059647</Id>
+					<Name><![CDATA[count2]]></Name>
+					<X>-1060</X><Y>1420</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Properties SaveInSnapshot="true" Constant="false" AccessType="public" StaticVariable="false">
+						<Type><![CDATA[int]]></Type>        
 					</Properties>
 				</Variable>
 				<Variable Class="Parameter">
@@ -961,7 +1123,7 @@ test_VS_Output.close();*/]]></DestroyCode>
 				<Variable Class="Parameter">
 					<Id>1777371413660</Id>
 					<Name><![CDATA[onnxValue]]></Name>
-					<X>-730</X><Y>910</Y>
+					<X>-1060</X><Y>910</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -982,7 +1144,7 @@ test_VS_Output.close();*/]]></DestroyCode>
 				<Variable Class="Parameter">
 					<Id>1777372509132</Id>
 					<Name><![CDATA[ortSession]]></Name>
-					<X>-730</X><Y>940</Y>
+					<X>-1060</X><Y>940</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -1003,7 +1165,7 @@ test_VS_Output.close();*/]]></DestroyCode>
 				<Variable Class="Parameter">
 					<Id>1777387248458</Id>
 					<Name><![CDATA[ortEnv]]></Name>
-					<X>-730</X><Y>970</Y>
+					<X>-1060</X><Y>970</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -1025,7 +1187,7 @@ test_VS_Output.close();*/]]></DestroyCode>
 				<Variable Class="Parameter">
 					<Id>1778469067271</Id>
 					<Name><![CDATA[ortOldSession]]></Name>
-					<X>-600</X><Y>970</Y>
+					<X>-930</X><Y>970</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -2060,7 +2222,7 @@ if ( isFlipped )
 				<Event>
 					<Id>1780110392697</Id>
 					<Name><![CDATA[testEvent]]></Name>
-					<X>-1140</X><Y>1120</Y>
+					<X>-1060</X><Y>1070</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -2087,26 +2249,18 @@ if ( isFlipped )
 						</RecurrenceCode>
 						<Condition><![CDATA[false]]></Condition>
 					</Properties>
-					<Action><![CDATA[// member gan zhichen & Nick
-// ========== 1. 获取当前状态与 AI 预测值 (只声明一次) ==========
-double currentLength = (double) buffer.size(); 
-double prob = predictCongestion();            
+					<Action><![CDATA[// member gan zhichen
+// ========== 1. Get Current Queue Length ==========
+double currentLength = (double) buffer.size();
 
-// ========== 2. 状态分支控制：高风险 / 中风险 / 安全状态 ==========
+// ========== 2. AI Prediction ==========
+double prob = predictCongestion();
 
+// ========== 3. Alert + Optimization ==========
 if (prob > 0.48 || currentLength > 85) {
-    traceln("[CONGESTION ALERT]");
+    traceln("CONGESTION ALERT!");
     
-    // 2.1 前端控流与物理设备降速 (防止物料继续堆积)
-    feedingEVASheetTime = 20.0; 
-    traceln("  OPT: feedingEVASheetTime -> 20.0 sec");
-    
-    if (procetime > 6) {
-        procetime = 6;
-        traceln("  OPT: flippingStation time -> 6 sec");
-    }
-    
-    // 2.2 提升前段机械臂能力 (原有优化逻辑)
+    // Optimization 1: Increase layup capacity
     try {
         if (layup.getCapacity() < 2) {
             layup.setCapacity(2);
@@ -2114,39 +2268,23 @@ if (prob > 0.48 || currentLength > 85) {
         }
     } catch (Exception e) {}
     
-    // 2.3 减小单次批处理大小
-    if (nCellsInRow > 3) {
-        nCellsInRow = 3;
-        traceln("  OPT: batch size -> 3");
+    // Optimization 2: Reduce batch size
+    try {
+        if (nCellsInRow > 3) {
+            nCellsInRow = 3;
+            traceln("  OPT: batch size -> 3");
+        }
+    } catch (Exception e) {}
+    
+    // Optimization 3: Reduce flippingStation time
+    if (procetime > 6) {
+        procetime = 6;
+        traceln("  OPT: flippingStation time -> 6 sec");
     }
     
-    // 2.4 层压机工艺提速消纳
-    if (evaType != 2) {
-        evaType = 2;
-        traceln("  OPT: laminator -> Ultra Fast Cure");
-    }
-
-} else if (prob > 0.25 || currentLength > 50) {
-    // 【中风险状态】：流控平滑过渡
-    feedingEVASheetTime = 15.0;
-    traceln("  WARN: feedingEVASheetTime -> 15.0 sec");
-    
-    if (evaType != 1) {
-        evaType = 1;
-        traceln("  WARN: laminator -> Fast Cure");
-    }
-
 } else if (currentLength < 50 && prob < 0.4) {
-    // 【安全正常状态】：恢复最高速生产与最佳品质
+    // Restore
     boolean restored = false;
-    
-    feedingEVASheetTime = 10.0;
-    
-    if (evaType != 0) {
-        evaType = 0;
-        traceln("  RESTORE: laminator -> Standard Cure");
-        restored = true;
-    }
     
     try {
         if (layup.getCapacity() > 1) {
@@ -2171,17 +2309,6 @@ if (prob > 0.48 || currentLength > 85) {
     if (restored) {
         traceln("System restored to normal");
     }
-}
-
-// ========== 3. Buffer 弹性库容控制 (独立逻辑，不使用未定义变量) ==========
-if (prob > 0.60 && currentLength >= 18) {
-    // 库容告急，直接通过内置方法把上限拉大到 35
-    buffer.set_capacity(35); 
-    traceln("  BUFFER ALERT: capacity expanded to 35");
-} else if (prob < 0.20 && currentLength < 10) {
-    // 产线通畅，收回弹性库容，标准容量恢复为 20
-    buffer.set_capacity(20);
-    traceln("  BUFFER NORMAL: capacity restored to 20");
 }]]></Action>
 				</Event>
 			</Events>
@@ -2320,42 +2447,65 @@ return 0;]]></Body>
 					<ReturnType><![CDATA[double]]></ReturnType>
 					<Id>1777372725176</Id>
 					<Name><![CDATA[predictProcessingTime]]></Name>
-					<X>-730</X><Y>840</Y>
+					<Description><![CDATA[Member Boyu Huang
+Predicts the dynamic processing time for the trimming station using the V1 linear regression model.
+Required model: "predict_time.onnx"
+
+This function of V1 has been replaced by the new function "advancedPredictTrimmingTime" of V2.
+
+This method utilizes the ONNX Runtime engine to perform inference by feeding real-time queue length and EVA type into the AI model. 
+If the inference fails, it falls back to a safe default value.
+
+@param queueLength     The current queue length of EVAs in all the three conveyor near lamination station.
+@param evaType              The value that represents the type of EVAs.
+@return                              The final trimming time predicted by linear regression model with the minimum of 0.1 
+
+ 
+]]></Description>
+					<X>-1060</X><Y>870</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
 					<ShowLabel>true</ShowLabel>
 					<Parameter>
 						<Name><![CDATA[queueLength]]></Name>
-						<Type><![CDATA[double]]></Type>
+						<Type><![CDATA[int]]></Type>
 					</Parameter>
 					<Parameter>
 						<Name><![CDATA[evaType]]></Name>
-						<Type><![CDATA[double]]></Type>
+						<Type><![CDATA[int]]></Type>
 					</Parameter>
-					<Body><![CDATA[double predictedTime = 60.0; 
+					<Body><![CDATA[// Set a safe default processing time
+double predictedTime = 60.0; 
 
 try {
-
+    // Cast inputs to float and reshape into a 2D array [1 batch, 2 features]
     float[][] inputData = new float[][]{ { (float)queueLength, (float)evaType } };
     
+    // Create an ONNX tensor from the Java array using the global environment
     ai.onnxruntime.OnnxTensor inputTensor = ai.onnxruntime.OnnxTensor.createTensor(ortEnv, inputData);
     
+    // Map the tensor to the specific input node name defined in the ONNX model ("input")
     java.util.Map<String, ai.onnxruntime.OnnxTensor> inputs = new java.util.HashMap<>();
     inputs.put("input", inputTensor); 
     
+    // Execute inference session using the V1 linear regression model
     ai.onnxruntime.OrtSession.Result oldResult = ortOldSession.run(inputs);
     
+    // Extract the predicted value from the output tensor and cast to double
     float[][] outputData = (float[][]) oldResult.get(0).getValue();
     predictedTime = (double) outputData[0][0];
     
+    // CRITICAL: Close native resources to prevent memory leaks during simulation
     inputTensor.close();
     oldResult.close();
     
 } catch (Exception e) {
+    // Fallback mechanism: log the error if AI inference fails
     traceln("Error during model inference: " + e.getMessage());
 }
 
+// Return the computed time with a safety lower bound of 0.1 seconds to prevent deadlocks
 return Math.max(predictedTime, 0.1);]]></Body>
 				</Function>
 				<Function AccessType="default" StaticFunction="false">
@@ -2363,7 +2513,20 @@ return Math.max(predictedTime, 0.1);]]></Body>
 					<ReturnType><![CDATA[double]]></ReturnType>
 					<Id>1778465687326</Id>
 					<Name><![CDATA[advancedPredictTrimmingTime]]></Name>
-					<X>-750</X><Y>1940</Y>
+					<Description><![CDATA[Member Boyu Huang
+Predicts the dynamic processing time for the trimming station using the V2 DNN model.
+Required model: "predict_time_dnn.onnx"
+
+This method utilizes the ONNX Runtime engine to perform inference by feeding real-time queue length and EVA type into the AI model. 
+If the inference fails, it falls back to a safe default value.
+
+@param queueLength     The current queue length of EVAs in all the three conveyor near lamination station.
+@param evaType              The value that represents the type of EVAs.
+@return                              The final trimming time predicted by DNN model.
+
+ 
+ ]]></Description>
+					<X>-1060</X><Y>1480</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -2376,38 +2539,35 @@ return Math.max(predictedTime, 0.1);]]></Body>
 						<Name><![CDATA[evaType]]></Name>
 						<Type><![CDATA[int]]></Type>
 					</Parameter>
-					<Body><![CDATA[//Set a safe default processing time to ensure basic output
+					<Body><![CDATA[// Set a safe default processing time to ensure basic output
 double predictedTime = 60.0; 
 
 try {
     // Cast inputs to float and reshape into a 2D array [1 batch, 2 features]
-    // This matches the [None, 2] input shape defined during Python model training
     float[][] floatInput = new float[][] { { (float)queueLength, (float)evaType } };
 
     // Create an ONNX tensor from the Java array using the global environment
     ai.onnxruntime.OnnxTensor tensor = ai.onnxruntime.OnnxTensor.createTensor(ortEnv, floatInput);
 
-    // Map the tensor to the specific input node name defined in the ONNX model ("input")
+    // Map the tensor to the specific input node name
     java.util.Map<String, ai.onnxruntime.OnnxTensor> inputs = new java.util.HashMap<>();
     inputs.put("input", tensor);
 
     // Execute inference session
     ai.onnxruntime.OrtSession.Result result = ortSession.run(inputs);
 
-    // Extract the predicted value from the output tensor and cast to double
+    // Extract the predicted value from the output tensor
     float[][] output = (float[][]) result.get(0).getValue();
     predictedTime = (double) output[0][0];
 
-    // CRITICAL: Close native resources to prevent memory leaks during simulation
+    // CRITICAL: Close native resources to prevent memory leaks
     tensor.close();
     result.close();
 
 } catch (Exception e) {
-    // Fallback mechanism: If AI inference fails, log the error and use the physical heuristic formula
+    // Fallback mechanism
     traceln("AI inference failed. Triggering fallback logic: " + e.getMessage());
     double fallbackTime = 60.0 - queueLength * 1.5 - evaType * 18.0;
-    
-    // Clamp the time to the absolute physical minimum of 5.0 seconds
     predictedTime = Math.max(5.0, fallbackTime); 
 }
 
@@ -2419,7 +2579,8 @@ return predictedTime;]]></Body>
 					<ReturnType><![CDATA[boolean]]></ReturnType>
 					<Id>1778684254517</Id>
 					<Name><![CDATA[predictQuality]]></Name>
-					<X>-750</X><Y>1970</Y>
+					<Description><![CDATA[Member Dongjin Yang]]></Description>
+					<X>-1060</X><Y>1630</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -2432,28 +2593,27 @@ return predictedTime;]]></Body>
 						<Name><![CDATA[trimmingTime]]></Name>
 						<Type><![CDATA[double]]></Type>
 					</Parameter>
-					<Body><![CDATA[try {
-    // 1. 准备二维数据
+					<Body><![CDATA[// 🎯 1. 安全守护：如果大环境或者质检模型会话为空，直接安全返回 true（合格），确保产线绝对不停机
+if (aiEnv == null || sessionQC == null) {
+    return true; 
+}
+
+try {
+    // 2. 准备二维数据（将旧的 trimmingTime 变量精准对齐修正为你们 Main 里真实的 procetime）
     float[][] inputData = new float[1][2];
     inputData[0][0] = (float) evaType;
-    inputData[0][1] = (float) trimmingTime;
+    inputData[0][1] = (float) procetime; 
 
-    // 2. 运行 AI 大脑
-    ai.onnxruntime.OnnxTensor tensor = ai.onnxruntime.OnnxTensor.createTensor(env, inputData); 
+    // 3. 运行模型推理（精准使用当前主画布定义的 aiEnv 环境变量名）
+    ai.onnxruntime.OnnxTensor tensor = ai.onnxruntime.OnnxTensor.createTensor(aiEnv, inputData); 
     ai.onnxruntime.OrtSession.Result result = sessionQC.run(java.util.Collections.singletonMap("input", tensor));
 
-    // 3. 提取结果
+    // 4. 提取结果
     long[] labels = (long[]) result.get(0).getValue();
-    
-    // 【关键新增！】如果 AI 成功了，让它在控制台大喊一声！
-    traceln("🔥 AI 质检完毕！材料:" + evaType + " 耗时:" + trimmingTime + " 结果:" + (labels[0] == 1 ? "【合格】" : "【报废】"));
-
     return labels[0] == 1; 
 
 } catch (Throwable e) { 
-    // 如果报错，拦截并打印
-    traceln("❌ 拦截到致命错误: " + e.toString());
-    return true; 
+    return true; // 发生任何异常，安全放行，不刷屏
 }]]></Body>
 				</Function>
 				<Function AccessType="default" StaticFunction="false">
@@ -2461,13 +2621,13 @@ return predictedTime;]]></Body>
 					<ReturnType><![CDATA[double]]></ReturnType>
 					<Id>1780110329656</Id>
 					<Name><![CDATA[predictCongestion]]></Name>
-					<X>-1140</X><Y>1140</Y>
+					<Description><![CDATA[Member Zhichen Gan]]></Description>
+					<X>-1060</X><Y>1090</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
 					<ShowLabel>true</ShowLabel>
-					<Body><![CDATA[// member gan zhichen
-try {
+					<Body><![CDATA[try {
     // Create ONNX Runtime environment
     ai.onnxruntime.OrtEnvironment env = ai.onnxruntime.OrtEnvironment.getEnvironment();
     
@@ -2509,6 +2669,72 @@ try {
 } catch (Exception e) {
     traceln("ONNX prediction failed: " + e.getMessage());
     return 0.5;
+}]]></Body>
+				</Function>
+				<Function AccessType="default" StaticFunction="false">
+					<ReturnModificator>RETURNS_VALUE</ReturnModificator>
+					<ReturnType><![CDATA[int]]></ReturnType>
+					<Id>1780226390261</Id>
+					<Name><![CDATA[predictRobotPolicy]]></Name>
+					<Description><![CDATA[Member Jingxuan Huang  
+Executes DQN-based inference to determine the optimal routing action (0, 1, or 2)
+Required model: "robot.policy.onnx" 
+
+This method transforms  feature data into a tensor compatible with the ONNX Runtime engine. It performs a  pass to obtain Q-values for all possible actions and selects the one with the highest value . 
+
+
+@param features        An array of double values representing the current state observation.
+
+@return     The index of the best action (int) predicted by the DQN model, or 0 as a safe fallback.
+]]></Description>
+					<X>-1060</X><Y>1210</Y>
+					<Label><X>10</X><Y>0</Y></Label>
+					<PublicFlag>false</PublicFlag>
+					<PresentationFlag>true</PresentationFlag>
+					<ShowLabel>true</ShowLabel>
+					<Parameter>
+						<Name><![CDATA[features]]></Name>
+						<Type><![CDATA[double[]]]></Type>
+					</Parameter>
+					<Body><![CDATA[// 🎯 Guardian: If the DQN routing inference session fails to load, return Exit 0 as default. 
+// This ensures the production line will never be blocked.
+if (sessionRobotPolicy == null || aiEnv == null) {
+    return 0; 
+}
+
+try {
+    // 1. Convert the features array passed from AnyLogic into a float[1][4] shape required by the Python model
+    float[][] inputData = new float[1][4];
+    for (int i = 0; i < 4; i++) {
+        inputData[0][i] = (float) features[i]; 
+    }
+    
+    // 2. Creat the input Tensor
+    OnnxTensor inputTensor = OnnxTensor.createTensor(aiEnv, inputData);
+    
+    // 3. Ultra-failsafe mechanism: Inject both "input_features" and "input" keys simultaneously
+    Map<String, OnnxTensor> container = new java.util.HashMap<>();
+    container.put("input_features", inputTensor);
+    container.put("input", inputTensor); 
+    
+    // 4. Run model inference to obtain Q-values for 3 possible actions 
+    try (OrtSession.Result results = sessionRobotPolicy.run(container)) {
+        float[][] qValues = (float[][]) results.get(0).getValue();
+        
+        // 5. Compute argmax to find the action index with the highest Q-value (0, 1, or 2)
+        int bestAction = 0;
+        float maxQ = qValues[0][0];
+        for (int i = 1; i < qValues[0].length; i++) {
+            if (qValues[0][i] > maxQ) {
+                maxQ = qValues[0][i];
+                bestAction = i;
+            }
+        }
+        return bestAction; 
+    }
+} catch (Exception e) {
+    traceln("❌ [DQN Inference Internal Intercept] Runtime safety fallback triggered, defaulting to Exit 0. Reason" + e.toString());
+    return 0; 
 }]]></Body>
 				</Function>
 			</Functions>
@@ -2607,50 +2833,6 @@ try {
 					<Title><![CDATA[]]></Title>
 				</HistogramData>
 			</AnalysisData>
-			<Connectivity>
-				<TextFile>
-					<Id>1778418836052</Id>
-					<Name><![CDATA[csvOutput]]></Name>
-					<X>-750</X><Y>1650</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<FileType>FILE</FileType>
-					<Url><![CDATA[]]></Url>
-					<FileMode>WRITE</FileMode>
-					<CharsetName>null</CharsetName>
-					<Separators></Separators>
-				</TextFile>
-				<TextFile>
-					<Id>1778467719655</Id>
-					<Name><![CDATA[testLogOutput]]></Name>
-					<X>-750</X><Y>1680</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<FileType>FILE</FileType>
-					<Url><![CDATA[]]></Url>
-					<FileMode>WRITE</FileMode>
-					<CharsetName>null</CharsetName>
-					<Separators></Separators>
-				</TextFile>
-				<TextFile>
-					<Id>1778468257675</Id>
-					<Name><![CDATA[test_VS_Output]]></Name>
-					<X>-750</X><Y>1710</Y>
-					<Label><X>10</X><Y>0</Y></Label>
-					<PublicFlag>false</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>true</ShowLabel>
-					<FileType>FILE</FileType>
-					<Url><![CDATA[]]></Url>
-					<FileMode>WRITE</FileMode>
-					<CharsetName>null</CharsetName>
-					<Separators></Separators>
-				</TextFile>
-			</Connectivity>
 			<AgentLinks>
 				<AgentLink>
 					<Id>1516353518293</Id>
@@ -6257,12 +6439,15 @@ if ( layup.getAgent( 0 ).nLayup == ( nCellsInColumn - 1 ) )
 							<ClassName><![CDATA[SelectOutput5]]></ClassName>
 							<ItemName><![CDATA[1412336243132]]></ItemName>
 						</GenericParameterSubstituteReference>
+						<GenericParameterSubstituteValue Class="CodeValue">
+							<Code><![CDATA[SolarPanel]]></Code>
+						</GenericParameterSubstituteValue>
 					</GenericParameterSubstitute>
 					<Parameters>
 						<Parameter>
 							<Name><![CDATA[type]]></Name>
 							<Value Class="CodeValue">
-								<Code><![CDATA[self.TYPE_CONDITIONS]]></Code>
+								<Code><![CDATA[self.TYPE_EXIT_NUMBER]]></Code>
 							</Value>
 						</Parameter>
 						<Parameter>
@@ -6306,6 +6491,9 @@ if ( layup.getAgent( 0 ).nLayup == ( nCellsInColumn - 1 ) )
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[exitNumber]]></Name>
+							<Value Class="CodeValue">
+								<Code><![CDATA[predictRobotPolicy(new double[]{ (double)count0, (double)count1, (double)count2, (double)procetime }) + 1]]></Code>
+							</Value>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onEnter]]></Name>
@@ -6327,9 +6515,6 @@ if ( layup.getAgent( 0 ).nLayup == ( nCellsInColumn - 1 ) )
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[choiceIsVolatile]]></Name>
-							<Value Class="CodeValue">
-								<Code><![CDATA[true]]></Code>
-							</Value>
 						</Parameter>
 					</Parameters>
 					<ReplicationFlag>false</ReplicationFlag>
@@ -6542,12 +6727,18 @@ if ( layup.getAgent( 0 ).nLayup == ( nCellsInColumn - 1 ) )
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onEnter]]></Name>
+							<Value Class="CodeValue">
+								<Code><![CDATA[count0++]]></Code>
+							</Value>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onAdd]]></Name>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onExit]]></Name>
+							<Value Class="CodeValue">
+								<Code><![CDATA[count0-=10]]></Code>
+							</Value>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onRemove]]></Name>
@@ -6778,12 +6969,18 @@ if ( layup.getAgent( 0 ).nLayup == ( nCellsInColumn - 1 ) )
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onEnter]]></Name>
+							<Value Class="CodeValue">
+								<Code><![CDATA[count1++]]></Code>
+							</Value>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onAdd]]></Name>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onExit]]></Name>
+							<Value Class="CodeValue">
+								<Code><![CDATA[count1-=10]]></Code>
+							</Value>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onRemove]]></Name>
@@ -7014,12 +7211,18 @@ if ( layup.getAgent( 0 ).nLayup == ( nCellsInColumn - 1 ) )
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onEnter]]></Name>
+							<Value Class="CodeValue">
+								<Code><![CDATA[count2++]]></Code>
+							</Value>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onAdd]]></Name>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onExit]]></Name>
+							<Value Class="CodeValue">
+								<Code><![CDATA[count2-=10]]></Code>
+							</Value>
 						</Parameter>
 						<Parameter>
 							<Name><![CDATA[onRemove]]></Name>
@@ -9587,7 +9790,7 @@ hourOutput++;]]></Code>
 				<EmbeddedObject>
 					<Id>1780109842325</Id>
 					<Name><![CDATA[onnxHelper]]></Name>
-					<X>-1100</X><Y>1200</Y>
+					<X>-1020</X><Y>1150</Y>
 					<Label><X>-45</X><Y>-35</Y></Label>
 					<PublicFlag>false</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -16859,7 +17062,7 @@ if ( waitForGlassDelivery.size() > 0 )
 							<Parameter>
 								<Name><![CDATA[processTime]]></Name>
 								<Value Class="CodeUnitValue">
-									<Code><![CDATA[feedingEVASheetTime]]></Code>
+									<Code><![CDATA[feedingEVASheetTime * 2]]></Code>
 									<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
 								</Value>
 							</Parameter>
@@ -19636,7 +19839,7 @@ laminator.get( 2 ).receive( "open" );]]></Code>
 							<Parameter>
 								<Name><![CDATA[processTime]]></Name>
 								<Value Class="CodeUnitValue">
-									<Code><![CDATA[(evaType == 2) ? 20.0 : ((evaType == 1) ? 30.0 : 45.0)]]></Code>
+									<Code><![CDATA[coolingTime]]></Code>
 									<Unit Class="TimeUnits"><![CDATA[SECOND]]></Unit>
 								</Value>
 							</Parameter>
@@ -24838,30 +25041,9 @@ and backsheet]]></Text>
 					<AngleZ>45.0</AngleZ>
 				</Light3D>
 				<Text>
-					<Id>1777372760865</Id>
-					<Name><![CDATA[text26]]></Name>
-					<X>-750</X><Y>860</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-16777216</Color>
-					<Text><![CDATA[Onnx basic parameters (V1)]]></Text>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>18</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
-				<Text>
 					<Id>1777372845710</Id>
 					<Name><![CDATA[text27]]></Name>
-					<X>-750</X><Y>800</Y>
+					<X>-1070</X><Y>830</Y>
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -24871,7 +25053,7 @@ and backsheet]]></Text>
 					<Z>0</Z>
 					<Rotation>0.0</Rotation>
 					<Color>-16777216</Color>
-					<Text><![CDATA[Onnx basic function (V1)]]></Text>
+					<Text><![CDATA[Onnx (V1) ]]></Text>
 					<Font>
 						<Name>SansSerif</Name>
 						<Size>18</Size>
@@ -24893,7 +25075,7 @@ and backsheet]]></Text>
 					<Rotation>0.0</Rotation>
 					<Color>-65536</Color>
 					<Text><![CDATA[predictProcessingTime( 5, evaType )]]></Text>
-					<TextCode><![CDATA["EVA queue length ahead of trimming:"+realTrimmingQueueLength]]></TextCode>
+					<TextCode><![CDATA["EVA queue length ahead of trimming: "+realTrimmingQueueLength+" , EVA type: "+evaType]]></TextCode>
 					<Font>
 						<Name>SansSerif</Name>
 						<Size>20</Size>
@@ -25167,48 +25349,6 @@ ultra fast cure EVA：2]]></Text>
 					</Font>
 					<Alignment>LEFT</Alignment>
 				</Text>
-				<Text>
-					<Id>1778461990841</Id>
-					<Name><![CDATA[text40]]></Name>
-					<X>-760</X><Y>1610</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-16777216</Color>
-					<Text><![CDATA[The text file]]></Text>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>18</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
-				<Text>
-					<Id>1778463155235</Id>
-					<Name><![CDATA[text41]]></Name>
-					<X>-760</X><Y>1740</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-16777216</Color>
-					<Text><![CDATA[New parameters and variables (refactor/advanced-AI-model-replace)]]></Text>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>20</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
 				<Polyline>
 					<Id>1778464596581</Id>
 					<Name><![CDATA[polyline31]]></Name>
@@ -25297,27 +25437,6 @@ ultra fast cure EVA：2]]></Text>
 					<Closed>false</Closed>
 				</Polyline>
 				<Text>
-					<Id>1778465661539</Id>
-					<Name><![CDATA[text42]]></Name>
-					<X>-760</X><Y>1900</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-16777216</Color>
-					<Text><![CDATA[New function (refactor/advanced-AI-model-replace)]]></Text>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>20</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
-				<Text>
 					<Id>1778466446086</Id>
 					<Name><![CDATA[text43]]></Name>
 					<X>40</X><Y>770</Y>
@@ -25364,9 +25483,9 @@ length]]></Text>
 					<Alignment>LEFT</Alignment>
 				</Text>
 				<Text>
-					<Id>1778502356779</Id>
-					<Name><![CDATA[text45]]></Name>
-					<X>-620</X><Y>1640</Y>
+					<Id>1780360184131</Id>
+					<Name><![CDATA[text40]]></Name>
+					<X>-1070</X><Y>1000</Y>
 					<Label><X>0</X><Y>-10</Y></Label>
 					<PublicFlag>true</PublicFlag>
 					<PresentationFlag>true</PresentationFlag>
@@ -25376,52 +25495,10 @@ length]]></Text>
 					<Z>0</Z>
 					<Rotation>0.0</Rotation>
 					<Color>-16777216</Color>
-					<Text><![CDATA[To generate sim data to train new model.]]></Text>
+					<Text><![CDATA[Onnx (V2) ]]></Text>
 					<Font>
 						<Name>SansSerif</Name>
-						<Size>16</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
-				<Text>
-					<Id>1778502452232</Id>
-					<Name><![CDATA[text46]]></Name>
-					<X>-590</X><Y>1670</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-16777216</Color>
-					<Text><![CDATA[To record test data of new model]]></Text>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>16</Size>
-						<Style>0</Style>
-					</Font>
-					<Alignment>LEFT</Alignment>
-				</Text>
-				<Text>
-					<Id>1778502500299</Id>
-					<Name><![CDATA[text47]]></Name>
-					<X>-750</X><Y>1720</Y>
-					<Label><X>0</X><Y>-10</Y></Label>
-					<PublicFlag>true</PublicFlag>
-					<PresentationFlag>true</PresentationFlag>
-					<ShowLabel>false</ShowLabel>
-					<DrawMode>SHAPE_DRAW_2D</DrawMode>
-					<EmbeddedIcon>false</EmbeddedIcon>
-					<Z>0</Z>
-					<Rotation>0.0</Rotation>
-					<Color>-16777216</Color>
-					<Text><![CDATA[To record test data of the old model for comparison]]></Text>
-					<Font>
-						<Name>SansSerif</Name>
-						<Size>16</Size>
+						<Size>18</Size>
 						<Style>0</Style>
 					</Font>
 					<Alignment>LEFT</Alignment>
@@ -30946,44 +31023,44 @@ laminator) are built using state charts.]]></Text>
 	</Experiments>
 	<ModelResources>
 		<Resource>
-			<Id>1516353499999</Id>
-			<Path><![CDATA[3d/monitor_on.dae]]></Path>
-			<ReferencedFromUserCode>false</ReferencedFromUserCode>
-			<Location>FILE_SYSTEM</Location>
-		</Resource>
-		<Resource>
-			<Id>1516353499998</Id>
-			<Path><![CDATA[3d/person.dae]]></Path>
-			<ReferencedFromUserCode>false</ReferencedFromUserCode>
-			<Location>FILE_SYSTEM</Location>
-		</Resource>
-		<Resource>
-			<Id>1516353499997</Id>
+			<Id>1780325362455</Id>
 			<Path><![CDATA[3d/forklift.dae]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 		<Resource>
-			<Id>1516353499995</Id>
+			<Id>1780325362456</Id>
+			<Path><![CDATA[3d/monitor_on.dae]]></Path>
+			<ReferencedFromUserCode>false</ReferencedFromUserCode>
+			<Location>FILE_SYSTEM</Location>
+		</Resource>
+		<Resource>
+			<Id>1780325362457</Id>
+			<Path><![CDATA[3d/person.dae]]></Path>
+			<ReferencedFromUserCode>false</ReferencedFromUserCode>
+			<Location>FILE_SYSTEM</Location>
+		</Resource>
+		<Resource>
+			<Id>1780325362458</Id>
 			<Path><![CDATA[AnyLogic model logo dark.png]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 		<Resource>
-			<Id>1764086803776</Id>
+			<Id>1780325362469</Id>
 			<Path><![CDATA[image.png]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 		<Resource>
-			<Id>1777387165315</Id>
-			<Path><![CDATA[onnxruntime-1.15.1.jar]]></Path>
+			<Id>1780325362503</Id>
+			<Path><![CDATA[OnnxHelperLibrary.jar]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
 		<Resource>
-			<Id>1780116348250</Id>
-			<Path><![CDATA[OnnxHelperLibrary.jar]]></Path>
+			<Id>1780325362504</Id>
+			<Path><![CDATA[onnxruntime-1.15.1.jar]]></Path>
 			<ReferencedFromUserCode>false</ReferencedFromUserCode>
 			<Location>FILE_SYSTEM</Location>
 		</Resource>
