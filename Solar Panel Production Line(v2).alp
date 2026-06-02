@@ -2587,8 +2587,19 @@ return predictedTime;]]></Body>
 					<ReturnType><![CDATA[boolean]]></ReturnType>
 					<Id>1778684254517</Id>
 					<Name><![CDATA[predictQuality]]></Name>
-					<Description><![CDATA[Member Dongjin Yang
-The function acts as a self‑preserving quality gate. It leans heavily on the principle of “fail open” (pass the item when in doubt) to keep the production line running under all circumstances, while using the ONNX model’s prediction to determine pass/fail when everything works correctly.]]></Description>
+					<Description><![CDATA[Member Yang Dongjin
+Predicts whether a production item is qualified using an ONNX quality‑control model.
+Required model: "qc_model.onnx"
+This method builds a 2D tensor from the evaluation type and processing time, runs the
+ONNX session, and interprets the output label. If the model environment or session is
+unavailable, or if any exception occurs, it safely returns true (pass) to ensure the
+production line never stops unexpectedly.
+
+@param evaType   The evaluation type or category identifier for the quality inspection.
+@param procetime The actual processing time of the current item (previously trimmingTime).
+@return true if the item is qualified (model output label == 1) or if a fail‑safe fallback
+       is triggered; false if the model explicitly predicts a defect.
+ ]]></Description>
 					<X>-1060</X><Y>1630</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
@@ -2602,7 +2613,7 @@ The function acts as a self‑preserving quality gate. It leans heavily on the p
 						<Name><![CDATA[trimmingTime]]></Name>
 						<Type><![CDATA[double]]></Type>
 					</Parameter>
-					<Body><![CDATA[// 🎯 1. Safety guard: if the AI environment or the QC model session is null,
+					<Body><![CDATA[//  1. Safety guard: if the AI environment or the QC model session is null,
 //    directly return true (qualified) to ensure the production line never stops
 if (aiEnv == null || sessionQC == null) {
     return true; 
