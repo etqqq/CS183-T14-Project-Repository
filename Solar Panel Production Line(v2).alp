@@ -2645,7 +2645,17 @@ try {
 					<ReturnType><![CDATA[double]]></ReturnType>
 					<Id>1780110329656</Id>
 					<Name><![CDATA[predictCongestion]]></Name>
-					<Description><![CDATA[Member Zhichen Gan]]></Description>
+					<Description><![CDATA[  Member Gan Zhichen
+  Predicts the congestion probability of the buffer station using the LSTM AI model.
+  Required model: "lstm_buffer.onnx"
+  
+  This method utilizes the ONNX Runtime engine to perform inference by feeding
+  real-time queue length data into the AI model. The model analyzes the current
+  queue status and returns a congestion probability.
+  If inference fails, it falls back to a safe default value.
+  
+  @return The congestion probability predicted by the LSTM model (0-1), 
+          or 0.5 if inference fails.]]></Description>
 					<X>-1060</X><Y>1090</Y>
 					<Label><X>10</X><Y>0</Y></Label>
 					<PublicFlag>false</PublicFlag>
