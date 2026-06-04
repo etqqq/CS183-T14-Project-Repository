@@ -88,12 +88,13 @@ In the Version 2 release, the simulation transitions from a single-point static 
 * **Resource Management:** Specific logic is implemented in Main's startup and destroy codes to securely load the model and strictly release underlying resources (GPU VRAM/CPU memory) occupied by the inference engine upon termination.
 ---
 
-#### Annotation:
-**Folder "3d"**: The folder that contains dae files that shows the 3D models of Anylogic agents. e.g. forklift.dae store the model of forklifts. 
+### Annotation:
+
+**Folder "3d"** : The folder that contains dae files that shows the 3D models of Anylogic agents. e.g. forklift.dae store the model of forklifts. 
 **File "contribution"**: The file shows the contributions that made by our team members.
 **File "Solar Panel Production Line.alp"**: The file is the code we made that can be opened by anylogic.
----
 
+---
 **Original model source link:** https://cloud.anylogic.com/model/29d54a61-aaac-4c47-8e50-941c0f5bb36e?mode=SETTINGS
 **Developer:** Anylogic
 
