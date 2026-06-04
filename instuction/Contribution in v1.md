@@ -18,8 +18,9 @@ Predict the defect probability of a panel based on historical data like solderin
 If the defect probability is extremely low, the AI can dynamically reduce the exposure and testing time (elTesterExpositionTime) to clear bottlenecks.
 **Robot predictive maintenance (LayupRobot / UnloadRobot):** The timeBetweenFailures for robots is currently a probability distribution. 
 Use AI to analyze continuous run times, processed batches, and current queue pressure to dynamically predict the optimal next maintenance window, triggering downtime maintenance without impacting line flow.
-Reference source：https://blog.csdn.net/pioneer_plus/article/details/131607502
-                  https://blog.csdn.net/m0_68275685/article/details/154383034
+Reference source:Scikit-learn.org. (2010). sklearn.neural_network.MLPRegressor — scikit-learn 0.21.3 documentation. [online] Available at: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html.
+                 Liu, C., Zhu, H., Tang, D., Nie, Q., Zhou, T., Wang, L. and Song, Y. (2022). Probing an intelligent predictive maintenance approach with deep learning and augmented reality for machine tools in IoT-enabled manufacturing. Robotics and Computer-Integrated Manufacturing, 77, p.102357. doi:https://doi.org/10.1016/j.rcim.2022.102357.
+                 Rana, N. and Arora, S. (2021). A Review on Surface Defect Detection of Solar Cells Using Machine Learning. Algorithms for Intelligent Systems, pp.385–395. doi:https://doi.org/10.1007/978-981-16-1048-6_29.
 
 //Member Gan Zhichen
 2026/4/29
@@ -39,15 +40,12 @@ a simple conclusion was drawn, for example:
 2026/4/29
 To the Main agent's "On destroy" code block, be sure to add code to close the ONNX session and environment (e.g., ortSession.close(); ortEnv.close();).This effectively prevents memory leaks, which can avoid software crashes or lag
 When loading the model, in addition to printing failure messages, you could add a boolean flag (e.g., isModelLoaded).If the model fails to load, the system can automatically fall back to using traditional fixed delays
-Reference source: https://onnxruntime.ai/docs/api/java/ai/onnxruntime/OrtSession.html
-                  https://blog.csdn.net/qq_38461344/article/details/135053898
+Reference source: Onnxruntime.ai. (2026b). OrtSession (onnxruntime API). [online] Available at: https://onnxruntime.ai/docs/api/java/ai/onnxruntime/OrtSession.html [Accessed 4 Jun. 2026].
 
 2026/4/30
 Instead of using default configurations when creating SessionOptions, leverage ONNX Runtime's built-in graph optimization levels to significantly boost inference speed.
 Encapsulate a reloadModel(String modelPath) method. This allows the application to safely close the old session and load a new model without requiring a full application restart. 
-Reference source: https://onnxruntime.ai/docs/performance/tune-performance.html
-                  https://onnxruntime.ai/docs/performance/model-test.html
-
+Reference source: Onnxruntime.ai. (2026a). ONNX Runtime Performance Tuning. [online] Available at: https://onnxruntime.ai/docs/performance/tune-performance.html [Accessed 4 Jun. 2026].
 
 
 //Member Yang Dongjin
@@ -56,9 +54,13 @@ The long-term testing process lasted until the entire model was completed for pr
 The performance optimization and safety tests of the entire production line were carried out according to the actual industrial process.
 After eliminating issues such as non-technical errors and insufficient raw materials, 
 the following steps will be taken to complete the adaptation by integrating with ONNX based on a more refined set of requirements.
-Reference source：https://www.sohu.com/a/871013007_121643760
-                  https://www.whyoha.com/news/industry/266.html
+Reference source：Anylogic.help. (2026). External Java classes | AnyLogic Help. [online] Available at: https://anylogic.help/advanced/libraries/adding-external-jar-files-and-java-classes.html [Accessed 4 Jun. 2026].
+                  Microsoft / Linux Foundation. (2026). ONNX Runtime: Cross-platform, high performance ML inferencing and training accelerator. [online] Available at: https://onnxruntime.ai/docs/ [Accessed: 28 Apr. 2026].
 
 2026/4/29
 Quantify the actual sales volume and production output of solar photovoltaic panels in reality, to alleviate the computational burden for the next model expansion
-Reference source：https://www.ceicdata.com/zh-hans/china/photovoltaic-capacity-and-production
+Reference source：IEA (2022). Solar PV Global Supply Chains – Analysis. [online] IEA. Available at: https://www.iea.org/reports/solar-pv-global-supply-chains.
+                  
+
+                  
+                  
