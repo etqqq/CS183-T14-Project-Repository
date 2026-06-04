@@ -62,37 +62,6 @@ Experimental runs showed a clear linear/non-linear response to the evaType slide
 ## Credits
 This project was developed as a group assignment for the AI-Simulation Integration module.
 
-## V2: Multi-Agent AI Architecture & Decoupled Digital Twin
-In the Version 2 release, the simulation transitions from a single-point static prediction model to a fully adaptive, multi-agent digital twin. We integrated four heterogeneous AI models into the AnyLogic physical execution layer via the ONNX Runtime Java API, establishing a robust Event-driven Closed-loop Feedback Workflow.
-
-### 🧠 Core AI Modules
-**1. Dynamic Process Time Prediction (DNN Model)**
-
-Role: Trimming Station Optimization
-
-Mechanism: Replaces the static 60-second processing time. It dynamically calculates the optimal trimming time by tensorizing real-time physical states, specifically the current queue length (queueLength) and the EVA material type (evaType).
-
-**2. Temporal Congestion Alerting (LSTM Model)**
-
-Role: Conveyor Buffer Management
-
-Mechanism: Utilizes a Temporal Sliding-Window Tensor to evaluate historical and current flow rates. It provides real-time congestion probability alerts, allowing the production line to foresee bottlenecks before they occur.
-
-**3. Automated Quality Control (QC Classification Model)**
-
-Role: Defect Probability Evaluation
-
-Mechanism: Extracts cross-sectional physical features of individual solar panels (e.g., historical soldering time and environmental dwell time) to perform real-time binary classification, determining whether a panel meets the quality threshold.
-
-4. Intelligent Routing Decisions (DQN Model)
-
-Role: Robotic Arm & Path Dispatching
-
-Mechanism: Formulates the routing logic as a Markov Decision Process (MDP). It analyzes global production line snapshots to output discrete action policies, autonomously dispatching materials to the most efficient operational paths.
-
-🛡️ Engineering Robustness
-All cross-environment communications between the Java-based simulation and the C++-based ONNX engine are strictly encapsulated. A comprehensive try-catch fallback mechanism is implemented to ensure zero simulation deadlocks, seamlessly degrading to safe default parameters during unexpected inference timeouts.
----
 # V2: Multi-Agent AI Architecture & Decoupled Digital Twin
 
 In the Version 2 release, the simulation transitions from a single-point static prediction model to a fully adaptive, multi-agent digital twin. We integrated four heterogeneous AI models into the AnyLogic physical execution layer via the ONNX Runtime Java API, establishing a robust Event-driven Closed-loop Feedback Workflow.
