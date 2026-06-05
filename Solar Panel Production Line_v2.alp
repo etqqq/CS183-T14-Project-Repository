@@ -7,7 +7,7 @@
 <AnyLogicWorkspace WorkspaceVersion="1.9" AnyLogicVersion="8.9.8.202602271015" AlpVersion="8.9.7">
 <Model>
 	<Id>1516353518244</Id>
-	<Name><![CDATA[Solar Panel Production Line(v2)]]></Name>
+	<Name><![CDATA[Solar Panel Production Line_v2]]></Name>
 	<Description><![CDATA[In this model solar cells are assembled by the stringer machine and placed on a specially prepared glass by the layup system. Next, the glass module with solar cells is conveyed through a sequence of processing, assembly, and quality assurance stations, transforming it into solar panel. Finished solar panels are gathered into batches and taken away by forklift. The model focuses on the different uses of the Station markup elements that can be included in a conveyor network built with the Material Handling Library. Simple automatic processing is simulated by delays for defined periods of time. Manual operations are represented by stations with the bound resources. The complicated behavior of the inline machines (e.g. framing station, laminator) are built using state charts.]]></Description>
 	<EngineVersion>6</EngineVersion>
 	<JavaPackageName><![CDATA[solar_panel_production_line]]></JavaPackageName>

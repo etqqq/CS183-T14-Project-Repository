@@ -7,7 +7,7 @@
 <AnyLogicWorkspace WorkspaceVersion="1.9" AnyLogicVersion="8.9.8.202602271015" AlpVersion="8.9.7">
 <Model>
 	<Id>1516353518244</Id>
-	<Name><![CDATA[Solar Panel Production Line(v1)]]></Name>
+	<Name><![CDATA[Solar Panel Production Line_v1]]></Name>
 	<Description><![CDATA[In this model solar cells are assembled by the stringer machine and placed on a specially prepared glass by the layup system. Next, the glass module with solar cells is conveyed through a sequence of processing, assembly, and quality assurance stations, transforming it into solar panel. Finished solar panels are gathered into batches and taken away by forklift. The model focuses on the different uses of the Station markup elements that can be included in a conveyor network built with the Material Handling Library. Simple automatic processing is simulated by delays for defined periods of time. Manual operations are represented by stations with the bound resources. The complicated behavior of the inline machines (e.g. framing station, laminator) are built using state charts.]]></Description>
 	<EngineVersion>6</EngineVersion>
 	<JavaPackageName><![CDATA[solar_panel_production_line]]></JavaPackageName>
@@ -29961,44 +29961,6 @@ laminator) are built using state charts.]]></Text>
 			<BypassInitialScreen>false</BypassInitialScreen>
 		</SimulationExperiment>	
 	</Experiments>
-	<ModelResources>
-		<Resource>
-			<Id>1780406013294</Id>
-			<Path><![CDATA[3d/forklift.dae]]></Path>
-			<ReferencedFromUserCode>false</ReferencedFromUserCode>
-			<Location>FILE_SYSTEM</Location>
-		</Resource>
-		<Resource>
-			<Id>1780406013295</Id>
-			<Path><![CDATA[3d/monitor_on.dae]]></Path>
-			<ReferencedFromUserCode>false</ReferencedFromUserCode>
-			<Location>FILE_SYSTEM</Location>
-		</Resource>
-		<Resource>
-			<Id>1780406013296</Id>
-			<Path><![CDATA[3d/person.dae]]></Path>
-			<ReferencedFromUserCode>false</ReferencedFromUserCode>
-			<Location>FILE_SYSTEM</Location>
-		</Resource>
-		<Resource>
-			<Id>1780406013332</Id>
-			<Path><![CDATA[onnxruntime-1.15.1.jar]]></Path>
-			<ReferencedFromUserCode>false</ReferencedFromUserCode>
-			<Location>FILE_SYSTEM</Location>
-		</Resource>
-		<Resource>
-			<Id>1780406031325</Id>
-			<Path><![CDATA[AnyLogic model logo dark.png]]></Path>
-			<ReferencedFromUserCode>false</ReferencedFromUserCode>
-			<Location>FILE_SYSTEM</Location>
-		</Resource>
-		<Resource>
-			<Id>1780406038750</Id>
-			<Path><![CDATA[image.png]]></Path>
-			<ReferencedFromUserCode>false</ReferencedFromUserCode>
-			<Location>FILE_SYSTEM</Location>
-		</Resource>
-	</ModelResources>
     <RequiredLibraryReference>
 		<LibraryName><![CDATA[com.anylogic.libraries.material_handling]]></LibraryName>
 		<VersionMajor>8</VersionMajor>
