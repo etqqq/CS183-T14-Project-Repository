@@ -102,3 +102,8 @@ In the Version 2 release, the simulation transitions from a single-point static 
 **Mentor:** Chris Roadknight
 **Leader:** Boyu Huang
 **Team Members:** Dongjing Yang, Jingxuan Huang, Zhichen Gan.
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 2e945f887b3c5cf12804d8c8bde9651878a6de05
