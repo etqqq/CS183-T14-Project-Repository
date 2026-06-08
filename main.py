@@ -1,3 +1,5 @@
+# Responsible Team Member: Dongjin Yang
+# Description: The Python file to train QC model
 import numpy as np
 from sklearn.linear_model import LogisticRegression # Using logistic regression (for classification)
 from skl2onnx import convert_sklearn
