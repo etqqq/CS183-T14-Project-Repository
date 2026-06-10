@@ -175,17 +175,18 @@ Description: Archival collection preserving the baseline Version 1 setup, highli
 
 > 💡 **Dependency Note:** The baseline execution environment requires the Java Archive (.jar) stubs declared below to initialize the underlying cross-platform inference pipelines. These libraries serve as the foundational bridges mapping the Java-based AnyLogic discrete-event loop into the C++ compiled ONNX Runtime environment[cite: 5, 6].
 
-"""
 File: onnxruntime-1.15.1.jar
-Responsible team member: Team T14 (System Integration)
-Description: The official ONNX Runtime Java API deployment engine package required by all sub-agents to load native compiled neural network sessions and drive execution loops within the AnyLogic runtime layer[cite: 5, 6].
-"""
 
-"""
-File: OnnxHelperLibrary.jar
 Responsible team member: Team T14 (System Integration)
+
+Description: The official ONNX Runtime Java API deployment engine package required by all sub-agents to load native compiled neural network sessions and drive execution loops within the AnyLogic runtime layer[cite: 5, 6].
+
+
+File: OnnxHelperLibrary.jar
+
+Responsible team member: Team T14 (System Integration)
+
 Description: A specialized helper bridge utility framework responsible for handling multi-dimensional primitive array conversions and formatting raw simulation state inputs into compatible tensors required by the ONNX engine, preventing structural dimension mismatches[cite: 5].
-"""
 
 ---
 **Original model source link:** https://cloud.anylogic.com/model/29d54a61-aaac-4c47-8e50-941c0f5bb36e?mode=SETTINGS
