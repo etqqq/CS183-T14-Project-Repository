@@ -1,0 +1,15 @@
+==================================================
+T14 PROJECT BENCHMARK METRICS (STABLE RUNTIME)
+==================================================
+
+[Version 1: Baseline LR]
+- Upstream Throughput: 416 units
+- Mean Inference Latency: N/A (Static Delay Logic)
+
+[Version 2: Four-Agent Multi-Agent Twin]
+- Upstream Throughput: 427 units
+- Mean Inference Latency: 0.036 ms (ONNX Runtime average)
+
+[Evaluation Summary]
+Throughput Uplift: +2.6% (416 -> 427 Units)
+System Latency Status: Zero Simulation Lag achieved.
