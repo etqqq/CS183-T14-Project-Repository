@@ -98,77 +98,54 @@ In the Version 2 release, the simulation transitions from a single-point static 
 
 > 💡 **System Note:** The tracking blocks below specifically declare the core serialized machine learning models running within our Digital Twin engine. Declarations and specifications for all other functional code logic, execution dependencies, and utility helper files can be viewed directly within their respective source code files or standard inline documentation blocks.
 
-"""
 File: lstm_buffer.onnx
 Responsible team member: Zhichen Gan
 Description: An ONNX-exported Long Short-Term Memory (LSTM) network model utilized by the predictCongestion function to ingest real-time queue length data and evaluate active buffer station congestion probability.
-"""
 
-"""
 File: lstm_model.keras
 Responsible team member: Zhichen Gan
 Description: The native native Keras model training checkpoint architecture that handles continuous factory-floor queue sequences before compilation and cross-platform open-format export to the deployment runtime.
-"""
 
-"""
 File: predict_qc.onnx
 Responsible team member: Dongjin Yang
 Description: A quality control model driven by the predictQuality function that ingests evaType and processingTime features to instantly distinguish compliant panel outputs from defective units.
-"""
 
-"""
 File: predict_time.onnx
 Responsible team member: Boyu Huang
 Description: The baseline Version 1 Linear Regression model utilized by the legacy predictTrimmingTime function to compute material-based machine operational intervals (succeeded by the enhanced Version 2 DNN architecture).
-"""
 
-"""
 File: predict_time_dnn.onnx
 Responsible team member: Boyu Huang
 Description: The advanced Version 2 Deep Neural Network (DNN) model embedded within the advancedPredictTrimmingTime function, utilizing ONNX acceleration to inject highly adaptive process time predictions into the physical lamination block.
-"""
 
-"""
 File: robot_policy.onnx
 Responsible team member: Jingxuan Huang
 Description: A Deep Q-Network (DQN) policy model evaluated via the predictRobotPolicy function, trained over continuous avoidance learning loops to guide sorting arms and transport automated guided vehicles (AGVs) on optimal dynamic paths.
-"""
 
-"""
 File: robot_policy.onnx.data
 Responsible team member: Jingxuan Huang
 Description: The underlying binary weights tensor resource and network parameters companion file directly linked to initialize the active DQN reinforcement learning routing execution space.
-"""
 
-"""
 Directory: /image_assets/01_data_generation
 Responsible team member: Boyu Huang
 Description: Contains telemetry logs and factory-floor data collection screenshots capturing the correlation between physical conveyor queue sizes and EVA material state features.
-"""
 
-"""
 Directory: /image_assets/02_model_training
 Responsible team member: Boyu Huang
 Description: Holds training loss curves, evaluation hyperparameter metrics, and scikit-learn/PyTorch execution session logs leading to the compilation of the 'predict_time_dnn.onnx' architecture.
-"""
 
-"""
 Directory: /image_assets/03_embedding_new_model_in_alp
 Responsible team member: Boyu Huang
 Description: Stores step-by-step IDE and AnyLogic interface screenshots verifying the structural deprecation of legacy variables and the clean wrapper integration of the advancedPredictTrimmingTime function.
-"""
 
-"""
 Directory: /image_assets/04_testing
 Responsible team member: Boyu Huang
 Description: Documents active system testing, zero-lag latency verifications (validating the ~0.036ms response metric), and concurrent steady-state throughput evaluation milestones within the V2 environment.
-"""
 
-"""
 Directory: /image_assets/05_former_model
 Responsible team member: Boyu Huang
 Description: Archival collection preserving the baseline Version 1 setup, highlighting the single-point Linear Regression mapping limits and structural context of 'predict_time.onnx' for regression delta auditing.
-"""
+
 
 ### 📦 External Core Dependencies (.JAR Frameworks)
 
