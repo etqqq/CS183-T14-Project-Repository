@@ -2733,43 +2733,41 @@ This method transforms  feature data into a tensor compatible with the ONNX Runt
 					<Body><![CDATA[// 🎯 Guardian: If the DQN routing inference session fails to load, return Exit 0 as default. 
 // This ensures the production line will never be blocked.
 if (sessionRobotPolicy == null || aiEnv == null) {
-    return 0; 
+return 0; 
 }
 
 try {
-    // 1. Convert the features array passed from AnyLogic into a float[1][4] shape required by the Python model
-    float[][] inputData = new float[1][4];
-    for (int i = 0; i < 4; i++) {
-        inputData[0][i] = (float) features[i]; 
-    }
-    
-    // 2. Creat the input Tensor
-    OnnxTensor inputTensor = OnnxTensor.createTensor(aiEnv, inputData);
-    
-    // 3. Ultra-failsafe mechanism: Inject both "input_features" and "input" keys simultaneously
-    Map<String, OnnxTensor> container = new java.util.HashMap<>();
-    container.put("input_features", inputTensor);
-    container.put("input", inputTensor); 
-    
-    // 4. Run model inference to obtain Q-values for 3 possible actions 
-    try (OrtSession.Result results = sessionRobotPolicy.run(container)) {
-        float[][] qValues = (float[][]) results.get(0).getValue();
-        
-        // 5. Compute argmax to find the action index with the highest Q-value (0, 1, or 2)
-        int bestAction = 0;
-        float maxQ = qValues[0][0];
-        for (int i = 1; i < qValues[0].length; i++) {
-            if (qValues[0][i] > maxQ) {
-                maxQ = qValues[0][i];
-                bestAction = i;
-            }
-        }
-        return bestAction; 
-    }
+// 1. Convert the features array passed from AnyLogic into a float[1][4] shape required by the Python model
+float[][] inputData = new float[1][4];
+for (int i = 0; i < 4; i++) {
+inputData[0][i] = (float) features[i]; 
+}
+// 2. Creat the input Tensor
+ai.onnxruntime.OnnxTensor inputTensor = ai.onnxruntime.OnnxTensor.createTensor(aiEnv, inputData);
+// 3. Exact Match: Inject ONLY the exact node name defined in PyTorch export
+java.util.Map<String, ai.onnxruntime.OnnxTensor> container = new java.util.HashMap<>();
+container.put("input_features", inputTensor); 
+// 4. Run model inference to obtain Q-values for 3 possible actions 
+try (ai.onnxruntime.OrtSession.Result results = sessionRobotPolicy.run(container)) {
+float[][] qValues = (float[][]) results.get(0).getValue();
+// 5. Compute argmax to find the action index with the highest Q-value (0, 1, or 2)
+int bestAction = 0;
+float maxQ = qValues[0][0];
+for (int i = 1; i < qValues[0].length; i++) {
+if (qValues[0][i] > maxQ) {
+maxQ = qValues[0][i];
+bestAction = i;
+}
+}
+// Manual resource cleanup for the input tensor
+inputTensor.close();
+return bestAction; 
+}
 } catch (Exception e) {
-    traceln("❌ [DQN Inference Internal Intercept] Runtime safety fallback triggered, defaulting to Exit 0. Reason" + e.toString());
-    return 0; 
-}]]></Body>
+traceln("❌ [DQN Inference Internal Intercept] Runtime safety fallback triggered, defaulting to Exit 0. Reason: " + e.toString());
+return 0; 
+}
+]]></Body>
 				</Function>
 			</Functions>
 			<AnalysisData>
@@ -31080,6 +31078,50 @@ laminator) are built using state charts.]]></Text>
 			<BypassInitialScreen>false</BypassInitialScreen>
 		</SimulationExperiment>	
 	</Experiments>
+	<ModelResources>
+		<Resource>
+			<Id>1781057704900</Id>
+			<Path><![CDATA[3d/forklift.dae]]></Path>
+			<ReferencedFromUserCode>false</ReferencedFromUserCode>
+			<Location>FILE_SYSTEM</Location>
+		</Resource>
+		<Resource>
+			<Id>1781057704902</Id>
+			<Path><![CDATA[3d/monitor_on.dae]]></Path>
+			<ReferencedFromUserCode>false</ReferencedFromUserCode>
+			<Location>FILE_SYSTEM</Location>
+		</Resource>
+		<Resource>
+			<Id>1781057704903</Id>
+			<Path><![CDATA[3d/person.dae]]></Path>
+			<ReferencedFromUserCode>false</ReferencedFromUserCode>
+			<Location>FILE_SYSTEM</Location>
+		</Resource>
+		<Resource>
+			<Id>1781057704906</Id>
+			<Path><![CDATA[AnyLogic model logo dark.png]]></Path>
+			<ReferencedFromUserCode>false</ReferencedFromUserCode>
+			<Location>FILE_SYSTEM</Location>
+		</Resource>
+		<Resource>
+			<Id>1781057704933</Id>
+			<Path><![CDATA[image.png]]></Path>
+			<ReferencedFromUserCode>false</ReferencedFromUserCode>
+			<Location>FILE_SYSTEM</Location>
+		</Resource>
+		<Resource>
+			<Id>1781057705046</Id>
+			<Path><![CDATA[OnnxHelperLibrary.jar]]></Path>
+			<ReferencedFromUserCode>false</ReferencedFromUserCode>
+			<Location>FILE_SYSTEM</Location>
+		</Resource>
+		<Resource>
+			<Id>1781057705047</Id>
+			<Path><![CDATA[onnxruntime-1.15.1.jar]]></Path>
+			<ReferencedFromUserCode>false</ReferencedFromUserCode>
+			<Location>FILE_SYSTEM</Location>
+		</Resource>
+	</ModelResources>
     <RequiredLibraryReference>
 		<LibraryName><![CDATA[com.anylogic.libraries.material_handling]]></LibraryName>
 		<VersionMajor>8</VersionMajor>
